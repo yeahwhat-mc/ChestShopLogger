@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import com.Acrobot.Breeze.Utils.PriceUtil;
 import com.Acrobot.ChestShop.Events.ShopCreatedEvent;
 import com.Acrobot.ChestShop.Events.ShopDestroyedEvent;
 import com.Acrobot.ChestShop.Events.TransactionEvent;
@@ -37,10 +38,12 @@ public class ChestShopListener implements Listener {
 			playerUID = plugin.getServer().getPlayer(player).getUniqueId().toString();
 		}
 		int amount = Integer.parseInt(e.getSignLine((short) 1));
+		double buyPrice = PriceUtil.getBuyPrice(e.getSignLine((short) 2));
+		double sellPrice = PriceUtil.getSellPrice(e.getSignLine((short) 2));
 		String material = e.getSignLine((short) 3);
 		
 		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO chestshop_shop (coordx, coordy, coordz, world, player, playeruid, amount, material) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO chestshop_shop (coordx, coordy, coordz, world, player, playeruid, amount, buyprice, sellprice, material) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			ps.setInt(1, coordX);
 			ps.setInt(2, coordY);
 			ps.setInt(3, coordZ);
@@ -48,7 +51,9 @@ public class ChestShopListener implements Listener {
 			ps.setString(5, player);
 			ps.setString(6, playerUID);
 			ps.setInt(7, amount);
-			ps.setString(8, material);
+			ps.setDouble(8, buyPrice);
+			ps.setDouble(9, sellPrice);
+			ps.setString(10, material);
 			ps.execute();
 			ps.close();
 			db.closeConnection();
