@@ -61,6 +61,22 @@ public class ChestShopListener implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onShopDestroy(ShopDestroyedEvent e) {
 		
+		int coordX = e.getChest().getX();
+		int coordY = e.getChest().getY();
+		int coordZ = e.getChest().getZ();
+		
+		try {
+			PreparedStatement ps = db.getConnection().prepareStatement("DELETE FROM chestshop_shop WHERE coordx = ? AND coordy = ? AND coordz = ?");
+			ps.setInt(1, coordX);
+			ps.setInt(2, coordY);
+			ps.setInt(3, coordZ);
+			ps.execute();
+			ps.close();
+			db.closeConnection();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
