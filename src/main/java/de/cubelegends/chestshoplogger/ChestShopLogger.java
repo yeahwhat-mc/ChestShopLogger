@@ -59,14 +59,20 @@ public class ChestShopLogger extends JavaPlugin {
 					+ "amount INT,"
 					+ "buyprice DOUBLE,"
 					+ "sellprice DOUBLE,"
-					+ "material VARCHAR(50)"
+					+ "material VARCHAR(50),"
+					+ "date BIGINT"
 					+ ");"
 					);
 			st.execute();
 			st.close();
 			st = db.getConnection().prepareStatement(
 					"CREATE TABLE IF NOT EXISTS chestshop_transaction ("
-					+ "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY"
+					+ "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+					+ "shopid INT,"
+					+ "client VARCHAR(50),"
+					+ "type VARCHAR(10),"
+					+ "price DOUBLE,"
+					+ "date BIGINT"
 					+ ");"
 					);
 			st.execute();
