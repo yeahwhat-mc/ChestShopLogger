@@ -108,18 +108,20 @@ public class ChestShopListener implements Listener {
 		double price = e.getPrice();
 		long date = System.currentTimeMillis();
 		
-		try {			
-			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO chestshop_transaction (shopid, client, type, price, date) VALUES(?, ?, ?, ?, ?)");
-			ps.setInt(1, shopID);
-			ps.setString(2, client);
-			ps.setString(3, type);
-			ps.setDouble(4, price);
-			ps.setLong(5, date);
-			ps.execute();
-			ps.close();
-			db.closeConnection();
-		} catch (SQLException ex) {
-			ex.printStackTrace();
+		if(shopID != 0) {
+			try {			
+				PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO chestshop_transaction (shopid, client, type, price, date) VALUES(?, ?, ?, ?, ?)");
+				ps.setInt(1, shopID);
+				ps.setString(2, client);
+				ps.setString(3, type);
+				ps.setDouble(4, price);
+				ps.setLong(5, date);
+				ps.execute();
+				ps.close();
+				db.closeConnection();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
 		}
 		
 	}
