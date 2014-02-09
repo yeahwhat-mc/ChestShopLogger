@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.cubelegends.chestshoplogger.handler.DBHandler;
+import de.cubelegends.chestshoplogger.listener.ChestShopListener;
 
 public class ChestShopLogger extends JavaPlugin {
 	
@@ -31,17 +32,34 @@ public class ChestShopLogger extends JavaPlugin {
 		setupTables();
 		db.closeConnection();
 		
+		// Register events
+		getServer().getPluginManager().registerEvents(new ChestShopListener(this), this);
+		
 	}
 	
 	public void onDisable() {
 		
 	}
 	
+	public DBHandler getDBHandler() {
+		return db;
+	}
+	
 	private void setupTables() {
 		try {
 			PreparedStatement st = db.getConnection().prepareStatement(
 					"CREATE TABLE IF NOT EXISTS chestshop_shop ("
-					+ "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY"
+					+ "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+					+ "coordx INT,"
+					+ "coordy INT,"
+					+ "coordz INT,"
+					+ "world VARCHAR(50),"
+					+ "player VARCHAR(50),"
+					+ "playeruid VARCHAR(50),"
+					+ "amount INT,"
+					+ "buyprice DOUBLE,"
+					+ "sellprice DOUBLE,"
+					+ "material VARCHAR(50)"
 					+ ");"
 					);
 			st.execute();
