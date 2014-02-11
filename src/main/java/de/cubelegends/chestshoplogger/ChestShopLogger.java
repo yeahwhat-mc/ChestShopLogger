@@ -59,7 +59,7 @@ public class ChestShopLogger extends JavaPlugin {
 					+ "amount INT,"
 					+ "buyprice DOUBLE,"
 					+ "sellprice DOUBLE,"
-					+ "material VARCHAR(50),"
+					+ "item VARCHAR(50),"
 					+ "date BIGINT"
 					+ ");"
 					);

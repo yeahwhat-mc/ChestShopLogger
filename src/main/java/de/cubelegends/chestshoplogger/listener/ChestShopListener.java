@@ -42,11 +42,11 @@ public class ChestShopListener implements Listener {
 		int amount = Integer.parseInt(e.getSignLine((short) 1));
 		double buyPrice = PriceUtil.getBuyPrice(e.getSignLine((short) 2));
 		double sellPrice = PriceUtil.getSellPrice(e.getSignLine((short) 2));
-		String material = e.getSignLine((short) 3);
+		String item = e.getSignLine((short) 3);
 		long date = System.currentTimeMillis();
 		
 		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO chestshop_shop (coordx, coordy, coordz, world, player, playeruid, amount, buyprice, sellprice, material, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO chestshop_shop (coordx, coordy, coordz, world, player, playeruid, amount, buyprice, sellprice, item, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			ps.setInt(1, coordX);
 			ps.setInt(2, coordY);
 			ps.setInt(3, coordZ);
@@ -56,7 +56,7 @@ public class ChestShopListener implements Listener {
 			ps.setInt(7, amount);
 			ps.setDouble(8, buyPrice);
 			ps.setDouble(9, sellPrice);
-			ps.setString(10, material);
+			ps.setString(10, item);
 			ps.setLong(11, date);
 			ps.execute();
 			ps.close();
