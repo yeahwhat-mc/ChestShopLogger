@@ -54,17 +54,17 @@ public class ChestShopLogger extends JavaPlugin {
 			PreparedStatement st = db.getConnection().prepareStatement(
 					"CREATE TABLE IF NOT EXISTS chestshop_shop ("
 					+ "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,"
-					+ "coordx INT,"
-					+ "coordy INT,"
-					+ "coordz INT,"
 					+ "world VARCHAR(50),"
-					+ "player VARCHAR(50),"
-					+ "playeruid VARCHAR(50),"
+					+ "x INT,"
+					+ "y INT,"
+					+ "z INT,"
+					+ "owner VARCHAR(50),"
+					+ "owneruid VARCHAR(50),"
 					+ "amount INT,"
 					+ "buyprice DOUBLE,"
 					+ "sellprice DOUBLE,"
 					+ "item VARCHAR(50),"
-					+ "date BIGINT"
+					+ "created BIGINT"
 					+ ");"
 					);
 			st.execute();

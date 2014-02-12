@@ -1,28 +1,22 @@
 package de.cubelegends.chestshoplogger.handler;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.cubelegends.chestshoplogger.ChestShopLogger;
+import de.cubelegends.chestshoplogger.models.ShopModel;
 
 public class CommandHandler implements CommandExecutor {
 	
 	private ChestShopLogger plugin;
-	private DBHandler db;
 	
 	private final String PREFIX = ChatColor.GREEN + "[CSL] " + ChatColor.GRAY;
 	
 	public CommandHandler(ChestShopLogger plugin) {
 		this.plugin = plugin;
-		this.db = plugin.getDBHandler();
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -43,8 +37,6 @@ public class CommandHandler implements CommandExecutor {
 	}
 	
 	private void tp(Player player, String idStr) {
-		
-		Location loc = null;
 		int id = 0;
 		
 		if(!player.hasPermission("csl.tp")) {
@@ -59,31 +51,14 @@ public class CommandHandler implements CommandExecutor {
 			return;
 		}
 		
-		try {
-			PreparedStatement st = db.getConnection().prepareStatement("SELECT world, coordx, coordy, coordz FROM chestshop_shop WHERE id = ?");
-			st.setInt(1, id);
-			ResultSet rs = st.executeQuery();
-			
-			if(rs.next()) {
-				loc = new Location(
-						plugin.getServer().getWorld(rs.getString("world")),
-						rs.getInt("coordx") + 0.5,
-						rs.getInt("coordy"),
-						rs.getInt("coordz") + 0.5
-						);
-			} else {
-				player.sendMessage(PREFIX + "There is no shop with the id " + id + "!");
-				return;
-			}
-			
-			rs.close();
-			st.close();
-			db.closeConnection();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		ShopModel shop = new ShopModel(plugin, id);
+		
+		if(shop.getID() == -1) {
+			player.sendMessage(PREFIX + "There is no shop with the id " + id + "!");
+			return;
 		}
 		
-		player.teleport(loc);
+		player.teleport(shop.getLoc());
 		player.sendMessage(PREFIX + "Welcome to shop " + id + "!");
 		
 	}
