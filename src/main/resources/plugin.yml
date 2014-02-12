@@ -4,4 +4,7 @@ author: Commander_Keks
 website: http://www.cubelegends.de
 main: de.cubelegends.chestshoplogger.ChestShopLogger
 depend: [ChestShop]
-    
+
+commands:
+  csl:
+    description: ChestShopLogger command

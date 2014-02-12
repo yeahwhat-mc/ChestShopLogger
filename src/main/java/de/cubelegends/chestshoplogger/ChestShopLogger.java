@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import de.cubelegends.chestshoplogger.handler.CommandHandler;
 import de.cubelegends.chestshoplogger.handler.DBHandler;
 import de.cubelegends.chestshoplogger.listener.ChestShopListener;
 
@@ -34,6 +35,9 @@ public class ChestShopLogger extends JavaPlugin {
 		
 		// Register events
 		getServer().getPluginManager().registerEvents(new ChestShopListener(this), this);
+		
+		// Register command executor
+		getCommand("csl").setExecutor(new CommandHandler(this));
 		
 	}
 	

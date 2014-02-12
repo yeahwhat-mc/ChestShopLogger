@@ -46,20 +46,20 @@ public class ChestShopListener implements Listener {
 		long date = System.currentTimeMillis();
 		
 		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO chestshop_shop (coordx, coordy, coordz, world, player, playeruid, amount, buyprice, sellprice, item, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			ps.setInt(1, coordX);
-			ps.setInt(2, coordY);
-			ps.setInt(3, coordZ);
-			ps.setString(4, world);
-			ps.setString(5, player);
-			ps.setString(6, playerUID);
-			ps.setInt(7, amount);
-			ps.setDouble(8, buyPrice);
-			ps.setDouble(9, sellPrice);
-			ps.setString(10, item);
-			ps.setLong(11, date);
-			ps.execute();
-			ps.close();
+			PreparedStatement st = db.getConnection().prepareStatement("INSERT INTO chestshop_shop (coordx, coordy, coordz, world, player, playeruid, amount, buyprice, sellprice, item, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			st.setInt(1, coordX);
+			st.setInt(2, coordY);
+			st.setInt(3, coordZ);
+			st.setString(4, world);
+			st.setString(5, player);
+			st.setString(6, playerUID);
+			st.setInt(7, amount);
+			st.setDouble(8, buyPrice);
+			st.setDouble(9, sellPrice);
+			st.setString(10, item);
+			st.setLong(11, date);
+			st.execute();
+			st.close();
 			db.closeConnection();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -76,14 +76,14 @@ public class ChestShopListener implements Listener {
 		int shopID = this.getShopID(coordX, coordY, coordZ);
 		
 		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("DELETE FROM chestshop_shop WHERE id = ?");
-			ps.setInt(1, shopID);
-			ps.execute();
-			ps.close();
-			ps = db.getConnection().prepareStatement("DELETE FROM chestshop_transaction WHERE shopid = ?");
-			ps.setInt(1, shopID);
-			ps.execute();
-			ps.close();
+			PreparedStatement st = db.getConnection().prepareStatement("DELETE FROM chestshop_shop WHERE id = ?");
+			st.setInt(1, shopID);
+			st.execute();
+			st.close();
+			st = db.getConnection().prepareStatement("DELETE FROM chestshop_transaction WHERE shopid = ?");
+			st.setInt(1, shopID);
+			st.execute();
+			st.close();
 			db.closeConnection();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -110,14 +110,14 @@ public class ChestShopListener implements Listener {
 		
 		if(shopID != 0) {
 			try {			
-				PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO chestshop_transaction (shopid, client, type, price, date) VALUES(?, ?, ?, ?, ?)");
-				ps.setInt(1, shopID);
-				ps.setString(2, client);
-				ps.setString(3, type);
-				ps.setDouble(4, price);
-				ps.setLong(5, date);
-				ps.execute();
-				ps.close();
+				PreparedStatement st = db.getConnection().prepareStatement("INSERT INTO chestshop_transaction (shopid, client, type, price, date) VALUES(?, ?, ?, ?, ?)");
+				st.setInt(1, shopID);
+				st.setString(2, client);
+				st.setString(3, type);
+				st.setDouble(4, price);
+				st.setLong(5, date);
+				st.execute();
+				st.close();
 				db.closeConnection();
 			} catch (SQLException ex) {
 				ex.printStackTrace();
@@ -130,15 +130,15 @@ public class ChestShopListener implements Listener {
 		int id = 0;
 		
 		try {			
-			PreparedStatement ps = db.getConnection().prepareStatement("SELECT id FROM chestshop_shop WHERE coordx = ? AND coordy = ? AND coordz = ?");
-			ps.setInt(1, coordX);
-			ps.setInt(2, coordY);
-			ps.setInt(3, coordZ);
-			ResultSet rs = ps.executeQuery();
+			PreparedStatement st = db.getConnection().prepareStatement("SELECT id FROM chestshop_shop WHERE coordx = ? AND coordy = ? AND coordz = ?");
+			st.setInt(1, coordX);
+			st.setInt(2, coordY);
+			st.setInt(3, coordZ);
+			ResultSet rs = st.executeQuery();
 			if(rs.next()) {
 				id = rs.getInt("id");
 			}
-			ps.close();
+			st.close();
 			db.closeConnection();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
