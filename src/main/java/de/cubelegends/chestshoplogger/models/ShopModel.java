@@ -3,6 +3,8 @@ package de.cubelegends.chestshoplogger.models;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Location;
 
@@ -14,6 +16,9 @@ import de.cubelegends.chestshoplogger.ChestShopLogger;
 import de.cubelegends.chestshoplogger.handler.DBHandler;
 
 public class ShopModel {
+
+	public final static int BUYACTION = 0;
+	public final static int SELLACTION = 1;
 	
 	private ChestShopLogger plugin;
 	private DBHandler db;
@@ -25,7 +30,7 @@ public class ShopModel {
 	private int amount;
 	private double buyPrice;
 	private double sellPrice;
-	private String item;
+	private String itemName;
 	private long created;
 
 	public ShopModel(ChestShopLogger plugin, int id) {
@@ -62,11 +67,11 @@ public class ShopModel {
 		int amount = Integer.parseInt(e.getSignLine((short) 1));
 		double buyPrice = PriceUtil.getBuyPrice(e.getSignLine((short) 2));
 		double sellPrice = PriceUtil.getSellPrice(e.getSignLine((short) 2));
-		String item = e.getSignLine((short) 3);
+		String itemName = e.getSignLine((short) 3);
 		long created = System.currentTimeMillis();
 		
 		try {
-			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("INSERT INTO chestshop_shop (world, x, y, z, owner, owneruid, amount, buyprice, sellprice, item, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("INSERT INTO chestshop_shop (world, x, y, z, owner, owneruid, amount, buyprice, sellprice, itemname, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			st.setString(1, world);
 			st.setInt(2, x);
 			st.setInt(3, y);
@@ -76,7 +81,7 @@ public class ShopModel {
 			st.setInt(7, amount);
 			st.setDouble(8, buyPrice);
 			st.setDouble(9, sellPrice);
-			st.setString(10, item);
+			st.setString(10, itemName);
 			st.setLong(11, created);
 			st.execute();
 			st.close();
@@ -102,6 +107,37 @@ public class ShopModel {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	public static List<ShopModel> findShops(ChestShopLogger plugin, int action, String itemName) {
+		List<ShopModel> shops = new ArrayList<ShopModel>();
+		
+		try {
+			PreparedStatement st = null;
+			switch(action) {
+			case BUYACTION:
+				st = plugin.getDBHandler().getConnection().prepareStatement("SELECT * FROM chestshop_shop WHERE itemname = ? AND buyprice != -1 ORDER BY buyprice / amount ASC");
+				break;
+			case SELLACTION:
+				st = plugin.getDBHandler().getConnection().prepareStatement("SELECT * FROM chestshop_shop WHERE itemname = ? AND sellprice != -1 ORDER BY sellprice / amount DESC");
+				break;
+			}
+			st.setString(1, itemName);
+			ResultSet rs = st.executeQuery();
+			
+			while(rs.next()) {
+				ShopModel shop = new ShopModel(plugin, rs);
+				shops.add(shop);
+			}
+			
+			rs.close();
+			st.close();
+			plugin.getDBHandler().closeConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return shops;
 	}
 	
 	public void fetchData(int id) {
@@ -153,7 +189,7 @@ public class ShopModel {
 			amount = rs.getInt("amount");
 			buyPrice = rs.getDouble("buyprice");
 			sellPrice = rs.getDouble("sellprice");
-			item = rs.getString("item");
+			itemName = rs.getString("itemname");
 			created = rs.getLong("created");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -172,7 +208,7 @@ public class ShopModel {
 					+ "amount = ?,"
 					+ "buyprice = ?,"
 					+ "sellprice = ?,"
-					+ "item = ?,"
+					+ "itemname = ?,"
 					+ "created = ? WHERE id = ?");
 			st.setString(1, loc.getWorld().getName());
 			st.setInt(2, loc.getBlockX());
@@ -183,7 +219,7 @@ public class ShopModel {
 			st.setInt(7, amount);
 			st.setDouble(8, buyPrice);
 			st.setDouble(9, sellPrice);
-			st.setString(10, item);
+			st.setString(10, itemName);
 			st.setLong(11, created);
 			st.setInt(12, id);
 			st.execute();
@@ -222,8 +258,8 @@ public class ShopModel {
 		return sellPrice;
 	}
 	
-	public String getItem() {
-		return item;
+	public String getItemName() {
+		return itemName;
 	}
 	
 	public long getCreated() {
@@ -253,8 +289,8 @@ public class ShopModel {
 		this.sellPrice = sellPrice;
 	}
 	
-	public void setItem(String item) {
-		this.item = item;
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
 	}
 	
 }

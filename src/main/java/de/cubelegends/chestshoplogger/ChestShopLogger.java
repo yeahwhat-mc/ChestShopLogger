@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import de.cubelegends.chestshoplogger.handler.CommandHandler;
 import de.cubelegends.chestshoplogger.handler.DBHandler;
 import de.cubelegends.chestshoplogger.listener.ChestShopListener;
+import de.cubelegends.chestshoplogger.yaml.ConfigYAML;
 
 public class ChestShopLogger extends JavaPlugin {
 	
@@ -16,7 +17,7 @@ public class ChestShopLogger extends JavaPlugin {
 	public void onEnable() {
 		
 		// Load config
-		this.saveDefaultConfig();
+		new ConfigYAML(this);
 						
 		// Load database
 		db = new DBHandler(
@@ -63,7 +64,7 @@ public class ChestShopLogger extends JavaPlugin {
 					+ "amount INT,"
 					+ "buyprice DOUBLE,"
 					+ "sellprice DOUBLE,"
-					+ "item VARCHAR(50),"
+					+ "itemname VARCHAR(50),"
 					+ "created BIGINT"
 					+ ");"
 					);

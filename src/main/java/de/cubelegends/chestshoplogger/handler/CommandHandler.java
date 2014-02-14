@@ -1,10 +1,15 @@
 package de.cubelegends.chestshoplogger.handler;
 
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import com.Acrobot.Breeze.Utils.MaterialUtil;
 
 import de.cubelegends.chestshoplogger.ChestShopLogger;
 import de.cubelegends.chestshoplogger.models.ShopModel;
@@ -22,44 +27,75 @@ public class CommandHandler implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		
 		if(args.length == 2 && args[0].equalsIgnoreCase("tp")) {
-			
-			if(!(sender instanceof Player)) {
-				sender.sendMessage("This command can only be executed by a player!");
-				return true;
-			}
-			
-			Player player = (Player) sender;
-			this.tp(player, args[1]);
-			
+			this.tp(sender, args[1]);
+			return true;			
+		}
+		
+		if(args.length == 3 && args[0].equalsIgnoreCase("find")) {
+			this.find(sender, args[1], args[2]);
+			return true;			
 		}
 		
 		return false;
 	}
 	
-	private void tp(Player player, String idStr) {
+	private void tp(CommandSender sender, String idStr) {
 		int id = 0;
 		
-		if(!player.hasPermission("csl.tp")) {
-			player.sendMessage(PREFIX + "You don't have enough permissions to do this!");
+		if(!(sender instanceof Player)) {
+			sender.sendMessage("This command can only be executed by a player!");
+			return;
+		}
+		
+		
+		if(!sender.hasPermission("csl.tp") && !sender.isOp()) {
+			sender.sendMessage(PREFIX + "You don't have enough permissions to do this!");
 			return;
 		}
 		
 		try {
 			id = Integer.parseInt(idStr);
 		} catch (NumberFormatException e) {
-			player.sendMessage(PREFIX + "You've entered an invalid id!");
+			sender.sendMessage(PREFIX + "You've entered an invalid id!");
 			return;
 		}
 		
 		ShopModel shop = new ShopModel(plugin, id);
 		
 		if(shop.getID() == -1) {
-			player.sendMessage(PREFIX + "There is no shop with the id " + id + "!");
+			sender.sendMessage(PREFIX + "There is no shop with the id " + id + "!");
+			return;
+		}
+
+		Player player = (Player) sender;
+		player.teleport(shop.getLoc());
+		sender.sendMessage(PREFIX + "Welcome to shop " + id + "!");
+		
+	}
+	
+	private void find(CommandSender sender, String action, String itemName) {
+		if(!sender.hasPermission("csl.buy") && !sender.isOp()) {
+			sender.sendMessage(PREFIX + "You don't have enough permissions to do this!");
 			return;
 		}
 		
-		player.teleport(shop.getLoc());
-		player.sendMessage(PREFIX + "Welcome to shop " + id + "!");
+		ItemStack itemStack = MaterialUtil.getItem(itemName);
+		itemName = MaterialUtil.getName(itemStack);
+		List<ShopModel> shops;
+		
+		switch(action) {
+		case "sell":
+			shops = ShopModel.findShops(plugin, ShopModel.SELLACTION, itemName);			
+			break;
+		default:
+			shops = ShopModel.findShops(plugin, ShopModel.BUYACTION, itemName);
+			break;
+		}
+		
+		sender.sendMessage(ChatColor.GREEN + "========== Search results ==========");
+		for(ShopModel shop : shops) {
+			sender.sendMessage("ID: " + shop.getID());
+		}
 		
 	}
 

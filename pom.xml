@@ -19,7 +19,6 @@
 			<directory>src/main/resources/</directory>
 			<includes>
 				<include>plugin.yml</include>
-				<include>config.yml</include>
 			</includes>
 		</resource>
 	</resources>
@@ -38,8 +37,8 @@
   	</dependency>
 	<dependency>
 		<groupId>org.bukkit</groupId>
-		<artifactId>bukkit</artifactId>
-		<version>1.7.2-R0.2</version>
+		<artifactId>craftbukkit</artifactId>
+		<version>1.7.2-R0.3</version>
 	</dependency>
   </dependencies>
 </project>
