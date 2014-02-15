@@ -8,14 +8,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import de.cubelegends.chestshoplogger.ChestShopLogger;
 
-public abstract class BasicYAML {
+public abstract class BasicYaml {
 	
 	protected ChestShopLogger plugin;
 	protected String filename;
 	protected File file;
 	protected FileConfiguration config;
 	
-	public BasicYAML(ChestShopLogger plugin, String filename) {
+	public BasicYaml(ChestShopLogger plugin, String filename) {
 		this.plugin = plugin;
 		this.filename = filename;
 		

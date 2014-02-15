@@ -4,9 +4,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import de.cubelegends.chestshoplogger.ChestShopLogger;
 
-public class ConfigYAML {
+public class ConfigYaml {
 	
-	public ConfigYAML(ChestShopLogger plugin) {
+	public ConfigYaml(ChestShopLogger plugin) {
 		FileConfiguration config = plugin.getConfig();
 
 		config.addDefault("database.host", "localhost");
