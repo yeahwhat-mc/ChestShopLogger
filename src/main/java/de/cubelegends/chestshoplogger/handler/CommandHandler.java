@@ -80,7 +80,13 @@ public class CommandHandler implements CommandExecutor {
 		}
 		
 		ItemStack itemStack = MaterialUtil.getItem(itemName);
-		itemName = MaterialUtil.getName(itemStack);
+		
+		if(itemStack == null) {
+			sender.sendMessage(PREFIX + "There is no item, called " + itemName + "!");
+			return;
+		}
+		
+		itemName = MaterialUtil.getSignName(itemStack);
 		List<ShopModel> shops;
 		
 		switch(action) {
