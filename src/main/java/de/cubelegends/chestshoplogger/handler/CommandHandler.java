@@ -18,7 +18,7 @@ public class CommandHandler implements CommandExecutor {
 	
 	private ChestShopLogger plugin;
 	
-	private final String PREFIX = ChatColor.GREEN + "[CSL] " + ChatColor.GRAY;
+	private final String PREFIX = ChatColor.DARK_GREEN + "[CSL] " + ChatColor.GRAY;
 	
 	public CommandHandler(ChestShopLogger plugin) {
 		this.plugin = plugin;
@@ -68,13 +68,13 @@ public class CommandHandler implements CommandExecutor {
 		}
 
 		Player player = (Player) sender;
-		player.teleport(shop.getLoc());
+		player.teleport(shop.getTP());
 		sender.sendMessage(PREFIX + "Welcome to shop " + id + "!");
 		
 	}
 	
 	private void find(CommandSender sender, String action, String itemName) {
-		if(!sender.hasPermission("csl.buy") && !sender.isOp()) {
+		if(!sender.hasPermission("csl.find") && !sender.isOp()) {
 			sender.sendMessage(PREFIX + "You don't have enough permissions to do this!");
 			return;
 		}
@@ -92,9 +92,20 @@ public class CommandHandler implements CommandExecutor {
 			break;
 		}
 		
-		sender.sendMessage(ChatColor.GREEN + "========== Search results ==========");
+		sender.sendMessage(ChatColor.DARK_GREEN + "========== Search results ==========");
+		sender.sendMessage(ChatColor.DARK_GRAY + "ID | Owner | Price | Amount");
 		for(ShopModel shop : shops) {
-			sender.sendMessage("ID: " + shop.getID());
+			String msg = ChatColor.GREEN + "ID: " + shop.getID() + ChatColor.GRAY + " | " + shop.getOwner() + " | ";
+			switch(action) {
+			case "sell":
+				msg = msg + shop.getSellPrice();		
+				break;
+			default:
+				msg = msg + shop.getBuyPrice();
+				break;
+			}
+			msg = msg + " | " + shop.getAmount();
+			sender.sendMessage(msg);
 		}
 		
 	}

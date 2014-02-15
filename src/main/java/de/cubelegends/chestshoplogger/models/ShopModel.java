@@ -25,6 +25,7 @@ public class ShopModel {
 	
 	private int id = -1;
 	private Location loc;
+	private Location tp;
 	private String owner;
 	private String ownerUID;
 	private int amount;
@@ -59,6 +60,11 @@ public class ShopModel {
 		int x = e.getSign().getX();
 		int y = e.getSign().getY();
 		int z = e.getSign().getZ();
+		double tpX = e.getPlayer().getLocation().getX();
+		double tpY = e.getPlayer().getLocation().getY();
+		double tpZ = e.getPlayer().getLocation().getZ();
+		float tpYaw = e.getPlayer().getLocation().getYaw();
+		float tpPitch = e.getPlayer().getLocation().getPitch();
 		String owner = e.getSignLine((short) 0);
 		String ownerUID = "";
 		if(plugin.getServer().getPlayer(owner) != null) {
@@ -71,18 +77,23 @@ public class ShopModel {
 		long created = System.currentTimeMillis();
 		
 		try {
-			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("INSERT INTO chestshop_shop (world, x, y, z, owner, owneruid, amount, buyprice, sellprice, itemname, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("INSERT INTO chestshop_shop (world, x, y, z, tpx, tpy, tpz, tpyaw, tppitch, owner, owneruid, amount, buyprice, sellprice, itemname, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			st.setString(1, world);
 			st.setInt(2, x);
 			st.setInt(3, y);
 			st.setInt(4, z);
-			st.setString(5, owner);
-			st.setString(6, ownerUID);
-			st.setInt(7, amount);
-			st.setDouble(8, buyPrice);
-			st.setDouble(9, sellPrice);
-			st.setString(10, itemName);
-			st.setLong(11, created);
+			st.setDouble(5, tpX);
+			st.setDouble(6, tpY);
+			st.setDouble(7, tpZ);
+			st.setFloat(8, tpYaw);
+			st.setFloat(9, tpPitch);
+			st.setString(10, owner);
+			st.setString(11, ownerUID);
+			st.setInt(12, amount);
+			st.setDouble(13, buyPrice);
+			st.setDouble(14, sellPrice);
+			st.setString(15, itemName);
+			st.setLong(16, created);
 			st.execute();
 			st.close();
 			plugin.getDBHandler().closeConnection();
@@ -184,6 +195,14 @@ public class ShopModel {
 					rs.getInt("y"),
 					rs.getInt("z")
 					);
+			tp = new Location(
+					plugin.getServer().getWorld(rs.getString("world")),
+					rs.getDouble("tpx"),
+					rs.getDouble("tpy"),
+					rs.getDouble("tpz"),
+					rs.getFloat("tpYaw"),
+					rs.getFloat("tpPitch")
+					);
 			owner = rs.getString("owner");
 			ownerUID = rs.getString("ownerUID");
 			amount = rs.getInt("amount");
@@ -203,6 +222,11 @@ public class ShopModel {
 					+ "x = ?,"
 					+ "y = ?,"
 					+ "z = ?,"
+					+ "tpx = ?,"
+					+ "tpy = ?,"
+					+ "tpz = ?,"
+					+ "tpyaw = ?,"
+					+ "tppitch = ?,"
 					+ "owmer = ?,"
 					+ "owneruid = ?,"
 					+ "amount = ?,"
@@ -214,14 +238,19 @@ public class ShopModel {
 			st.setInt(2, loc.getBlockX());
 			st.setInt(3, loc.getBlockY());
 			st.setInt(4, loc.getBlockZ());
-			st.setString(5, owner);
-			st.setString(6, ownerUID);
-			st.setInt(7, amount);
-			st.setDouble(8, buyPrice);
-			st.setDouble(9, sellPrice);
-			st.setString(10, itemName);
-			st.setLong(11, created);
-			st.setInt(12, id);
+			st.setDouble(5, tp.getX());
+			st.setDouble(6, tp.getY());
+			st.setDouble(7, tp.getZ());
+			st.setFloat(8, tp.getYaw());
+			st.setFloat(9, tp.getPitch());
+			st.setString(10, owner);
+			st.setString(11, ownerUID);
+			st.setInt(12, amount);
+			st.setDouble(13, buyPrice);
+			st.setDouble(14, sellPrice);
+			st.setString(15, itemName);
+			st.setLong(16, created);
+			st.setInt(17, id);
 			st.execute();
 			st.close();
 			db.closeConnection();
@@ -236,6 +265,10 @@ public class ShopModel {
 	
 	public Location getLoc() {
 		return loc;
+	}
+	
+	public Location getTP() {
+		return tp;
 	}
 	
 	public String getOwner() {
@@ -268,6 +301,10 @@ public class ShopModel {
 	
 	public void setLoc(Location loc) {
 		this.loc = loc;
+	}
+	
+	public void setTP(Location tp) {
+		this.tp = tp;
 	}
 	
 	public void setOwner(String owner) {
