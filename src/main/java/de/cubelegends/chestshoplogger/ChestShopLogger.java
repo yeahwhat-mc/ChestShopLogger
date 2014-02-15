@@ -39,6 +39,7 @@ public class ChestShopLogger extends JavaPlugin {
 		
 		// Register command executor
 		getCommand("csl").setExecutor(new CommandHandler(this));
+		getCommand("shop").setExecutor(new CommandHandler(this));
 		
 	}
 	
