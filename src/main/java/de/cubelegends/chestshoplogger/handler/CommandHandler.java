@@ -101,7 +101,7 @@ public class CommandHandler implements CommandExecutor {
 		sender.sendMessage(ChatColor.DARK_GREEN + "========== Search results ==========");
 		sender.sendMessage(ChatColor.DARK_GRAY + "ID | Owner | Price | Amount");
 		for(ShopModel shop : shops) {
-			String msg = ChatColor.GREEN + "ID: " + shop.getID() + ChatColor.GRAY + " | " + shop.getOwner() + " | ";
+			String msg = ChatColor.GREEN + "" + shop.getID() + ChatColor.GRAY + " | " + shop.getOwner() + " | ";
 			switch(action) {
 			case "sell":
 				msg = msg + shop.getSellPrice();		
