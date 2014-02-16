@@ -32,6 +32,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Henning Storck/Documents/Programmieren/Java/ChestShop.jar"/>
+	<classpathentry kind="lib" path="F:/Documents/Programmieren/Java/ChestShop.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
