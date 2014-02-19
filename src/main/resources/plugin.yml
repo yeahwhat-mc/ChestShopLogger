@@ -2,6 +2,7 @@ name: ChestShopLogger
 version: 0.1.1
 author: Commander_Keks
 website: http://www.cubelegends.de
+dev-url: http://dev.bukkit.org/bukkit-plugins/chestshoplogger/
 main: de.cubelegends.chestshoplogger.ChestShopLogger
 depend: [ChestShop]
 
