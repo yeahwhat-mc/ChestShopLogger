@@ -7,12 +7,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import com.Acrobot.Breeze.Utils.MaterialUtil;
 
 import de.cubelegends.chestshoplogger.ChestShopLogger;
 import de.cubelegends.chestshoplogger.models.ShopModel;
+import de.cubelegends.chestshoplogger.utils.ShopUtil;
 
 public class CommandHandler implements CommandExecutor {
 	
@@ -47,7 +45,6 @@ public class CommandHandler implements CommandExecutor {
 			return;
 		}
 		
-		
 		if(!sender.hasPermission("csl.tp") && !sender.isOp()) {
 			sender.sendMessage(PREFIX + "You don't have enough permissions to do this!");
 			return;
@@ -73,20 +70,19 @@ public class CommandHandler implements CommandExecutor {
 		
 	}
 	
-	private void find(CommandSender sender, String action, String itemName) {
+	private void find(CommandSender sender, String action, String dirtyName) {
 		if(!sender.hasPermission("csl.find") && !sender.isOp()) {
 			sender.sendMessage(PREFIX + "You don't have enough permissions to do this!");
 			return;
 		}
 		
-		ItemStack itemStack = MaterialUtil.getItem(itemName);
+		String itemName = ShopUtil.getItemName(dirtyName);
 		
-		if(itemStack == null) {
-			sender.sendMessage(PREFIX + "There is no item, called " + itemName + "!");
+		if(itemName.equals("Unknown")) {
+			sender.sendMessage(PREFIX + "There is no item, called " + dirtyName + "!");
 			return;
 		}
 		
-		itemName = MaterialUtil.getSignName(itemStack);
 		List<ShopModel> shops;
 		
 		switch(action) {
