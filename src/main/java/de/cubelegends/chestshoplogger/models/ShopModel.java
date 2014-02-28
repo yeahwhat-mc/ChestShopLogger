@@ -13,7 +13,7 @@ import com.Acrobot.ChestShop.Events.ShopCreatedEvent;
 import com.Acrobot.ChestShop.Events.ShopDestroyedEvent;
 
 import de.cubelegends.chestshoplogger.ChestShopLogger;
-import de.cubelegends.chestshoplogger.handler.DBHandler;
+import de.cubelegends.chestshoplogger.db.DBHandler;
 import de.cubelegends.chestshoplogger.utils.ShopUtil;
 
 public class ShopModel {

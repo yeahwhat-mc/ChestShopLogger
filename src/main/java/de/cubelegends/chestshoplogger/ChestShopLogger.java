@@ -5,10 +5,9 @@ import java.sql.SQLException;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import de.cubelegends.chestshoplogger.handler.CommandHandler;
-import de.cubelegends.chestshoplogger.handler.DBHandler;
+import de.cubelegends.chestshoplogger.cmds.CSLCmd;
+import de.cubelegends.chestshoplogger.db.DBHandler;
 import de.cubelegends.chestshoplogger.listener.ChestShopListener;
-import de.cubelegends.chestshoplogger.yaml.ConfigYaml;
 
 public class ChestShopLogger extends JavaPlugin {
 	
@@ -17,7 +16,14 @@ public class ChestShopLogger extends JavaPlugin {
 	public void onEnable() {
 		
 		// Load config
-		new ConfigYaml(this);
+		this.getConfig().addDefault("database.host", "localhost");
+		this.getConfig().addDefault("database.port", 3306);
+		this.getConfig().addDefault("database.user", "root");
+		this.getConfig().addDefault("database.password", "");
+		this.getConfig().addDefault("database.database", "bukkit");
+		this.getConfig().addDefault("database.tableVersion", 1);
+		this.getConfig().options().copyDefaults(true);
+		this.saveConfig();
 						
 		// Load database
 		db = new DBHandler(
@@ -38,8 +44,8 @@ public class ChestShopLogger extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ChestShopListener(this), this);
 		
 		// Register command executor
-		getCommand("csl").setExecutor(new CommandHandler(this));
-		getCommand("shop").setExecutor(new CommandHandler(this));
+		getCommand("csl").setExecutor(new CSLCmd(this));
+		getCommand("shop").setExecutor(new CSLCmd(this));
 		
 	}
 	

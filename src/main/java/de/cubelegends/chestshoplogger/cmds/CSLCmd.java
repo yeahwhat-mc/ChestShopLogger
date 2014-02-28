@@ -1,4 +1,4 @@
-package de.cubelegends.chestshoplogger.handler;
+package de.cubelegends.chestshoplogger.cmds;
 
 import java.util.List;
 
@@ -12,13 +12,13 @@ import de.cubelegends.chestshoplogger.ChestShopLogger;
 import de.cubelegends.chestshoplogger.models.ShopModel;
 import de.cubelegends.chestshoplogger.utils.ShopUtil;
 
-public class CommandHandler implements CommandExecutor {
+public class CSLCmd implements CommandExecutor {
 	
 	private ChestShopLogger plugin;
 	
 	private final String PREFIX = ChatColor.DARK_GREEN + "[CSL] " + ChatColor.GRAY;
 	
-	public CommandHandler(ChestShopLogger plugin) {
+	public CSLCmd(ChestShopLogger plugin) {
 		this.plugin = plugin;
 	}
 	

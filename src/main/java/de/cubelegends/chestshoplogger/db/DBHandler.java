@@ -1,4 +1,4 @@
-package de.cubelegends.chestshoplogger.handler;
+package de.cubelegends.chestshoplogger.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
