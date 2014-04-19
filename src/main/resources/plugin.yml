@@ -7,5 +7,6 @@ main: de.cubelegends.chestshoplogger.ChestShopLogger
 depend: [ChestShop]
 
 commands:
-  shop:
+  chestshoplogger:
     description: ChestShopLogger command
+    aliases: [shop, csl]

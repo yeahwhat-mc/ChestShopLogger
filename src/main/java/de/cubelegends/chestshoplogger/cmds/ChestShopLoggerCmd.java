@@ -12,11 +12,11 @@ import de.cubelegends.chestshoplogger.ChestShopLogger;
 import de.cubelegends.chestshoplogger.models.ShopModel;
 import de.cubelegends.chestshoplogger.utils.ShopUtil;
 
-public class ShopCmd implements CommandExecutor {
+public class ChestShopLoggerCmd implements CommandExecutor {
 	
 	private ChestShopLogger plugin;
 	
-	public ShopCmd(ChestShopLogger plugin) {
+	public ChestShopLoggerCmd(ChestShopLogger plugin) {
 		this.plugin = plugin;
 	}
 	
@@ -43,7 +43,7 @@ public class ShopCmd implements CommandExecutor {
 			return;
 		}
 		
-		if(!sender.hasPermission("csl.tp") && !sender.isOp()) {
+		if(!sender.hasPermission("chestshoplogger.tp") && !sender.isOp()) {
 			sender.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");
 			return;
 		}
@@ -69,7 +69,7 @@ public class ShopCmd implements CommandExecutor {
 	}
 	
 	private void find(CommandSender sender, String action, String dirtyName) {
-		if(!sender.hasPermission("csl.find") && !sender.isOp()) {
+		if(!sender.hasPermission("chestshoplogger.find") && !sender.isOp()) {
 			sender.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");
 			return;
 		}
