@@ -130,10 +130,10 @@ public class ShopModel {
 			PreparedStatement st = null;
 			switch(action) {
 			case BUYACTION:
-				st = plugin.getDBHandler().getConnection().prepareStatement("SELECT * FROM chestshop_shop WHERE itemname = ? AND buyprice != -1 ORDER BY buyprice / amount ASC");
+				st = plugin.getDBHandler().getConnection().prepareStatement("SELECT * FROM chestshop_shop WHERE itemname = ? AND buyprice != -1 ORDER BY buyprice / maxamount ASC");
 				break;
 			case SELLACTION:
-				st = plugin.getDBHandler().getConnection().prepareStatement("SELECT * FROM chestshop_shop WHERE itemname = ? AND sellprice != -1 ORDER BY sellprice / amount DESC");
+				st = plugin.getDBHandler().getConnection().prepareStatement("SELECT * FROM chestshop_shop WHERE itemname = ? AND sellprice != -1 ORDER BY sellprice / maxamount DESC");
 				break;
 			}
 			st.setString(1, itemName);
