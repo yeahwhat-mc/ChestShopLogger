@@ -12,7 +12,7 @@ import de.cubelegends.chestshoplogger.listener.ChestShopListener;
 
 public class ChestShopLogger extends JavaPlugin {
 	
-	public static final String PREFIX = ChatColor.DARK_GREEN + "[ChestShop] " + ChatColor.GRAY;
+	public static final String PREFIX = ChatColor.DARK_GREEN + "[ChestShopLogger] " + ChatColor.GRAY;
 	
 	private DBHandler db;
 	
