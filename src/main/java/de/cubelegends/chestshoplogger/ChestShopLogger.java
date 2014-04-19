@@ -3,13 +3,16 @@ package de.cubelegends.chestshoplogger;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import de.cubelegends.chestshoplogger.cmds.CSLCmd;
+import de.cubelegends.chestshoplogger.cmds.ShopCmd;
 import de.cubelegends.chestshoplogger.db.DBHandler;
 import de.cubelegends.chestshoplogger.listener.ChestShopListener;
 
 public class ChestShopLogger extends JavaPlugin {
+	
+	public static final String PREFIX = ChatColor.DARK_GREEN + "[ChestShop] " + ChatColor.GRAY;
 	
 	private DBHandler db;
 	
@@ -44,8 +47,7 @@ public class ChestShopLogger extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ChestShopListener(this), this);
 		
 		// Register command executor
-		getCommand("csl").setExecutor(new CSLCmd(this));
-		getCommand("shop").setExecutor(new CSLCmd(this));
+		getCommand("shop").setExecutor(new ShopCmd(this));
 		
 	}
 	
@@ -72,8 +74,8 @@ public class ChestShopLogger extends JavaPlugin {
 					+ "tpyaw DOUBLE,"
 					+ "tppitch DOUBLE,"
 					+ "owner VARCHAR(50),"
-					+ "owneruid VARCHAR(50),"
-					+ "amount INT,"
+					+ "owneruuid VARCHAR(50),"
+					+ "maxamount INT,"
 					+ "buyprice DOUBLE,"
 					+ "sellprice DOUBLE,"
 					+ "itemname VARCHAR(50),"
@@ -87,7 +89,9 @@ public class ChestShopLogger extends JavaPlugin {
 					+ "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,"
 					+ "shopid INT,"
 					+ "client VARCHAR(50),"
+					+ "clientuuid VARCHAR(50),"
 					+ "type VARCHAR(10),"
+					+ "amount INT,"
 					+ "price DOUBLE,"
 					+ "date BIGINT"
 					+ ");"

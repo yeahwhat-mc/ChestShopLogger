@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Location;
 
@@ -18,18 +19,19 @@ import de.cubelegends.chestshoplogger.utils.ShopUtil;
 
 public class ShopModel {
 
+	public final static int IDNOTFOUND = 0;
 	public final static int BUYACTION = 0;
 	public final static int SELLACTION = 1;
 	
 	private ChestShopLogger plugin;
 	private DBHandler db;
 	
-	private int id = -1;
+	private int id = IDNOTFOUND;
 	private Location loc;
 	private Location tp;
 	private String owner;
-	private String ownerUID;
-	private int amount;
+	private UUID ownerUUID;
+	private int maxAmount;
 	private double buyPrice;
 	private double sellPrice;
 	private String itemName;
@@ -56,29 +58,29 @@ public class ShopModel {
 		fetchData(rs);
 	}
 	
-	public static void create(ChestShopLogger plugin, ShopCreatedEvent e) {
-		String world = e.getSign().getWorld().getName();	
-		int x = e.getSign().getX();
-		int y = e.getSign().getY();
-		int z = e.getSign().getZ();
-		double tpX = e.getPlayer().getLocation().getX();
-		double tpY = e.getPlayer().getLocation().getY();
-		double tpZ = e.getPlayer().getLocation().getZ();
-		float tpYaw = e.getPlayer().getLocation().getYaw();
-		float tpPitch = e.getPlayer().getLocation().getPitch();
-		String owner = e.getSignLine((short) 0);
-		String ownerUID = "";
+	public static void create(ChestShopLogger plugin, ShopCreatedEvent event) {
+		String world = event.getSign().getWorld().getName();	
+		int x = event.getSign().getX();
+		int y = event.getSign().getY();
+		int z = event.getSign().getZ();
+		double tpX = event.getPlayer().getLocation().getX();
+		double tpY = event.getPlayer().getLocation().getY();
+		double tpZ = event.getPlayer().getLocation().getZ();
+		float tpYaw = event.getPlayer().getLocation().getYaw();
+		float tpPitch = event.getPlayer().getLocation().getPitch();
+		String owner = event.getSignLine((short) 0);
+		String ownerUUID = "";
 		if(plugin.getServer().getPlayer(owner) != null) {
-			ownerUID = plugin.getServer().getPlayer(owner).getUniqueId().toString();
+			ownerUUID = plugin.getServer().getPlayer(owner).getUniqueId().toString();
 		}
-		int amount = Integer.parseInt(e.getSignLine((short) 1));
-		double buyPrice = PriceUtil.getBuyPrice(e.getSignLine((short) 2));
-		double sellPrice = PriceUtil.getSellPrice(e.getSignLine((short) 2));
-		String itemName = ShopUtil.getItemName(e.getSignLine((short) 3));
+		int maxAmount = Integer.parseInt(event.getSignLine((short) 1));
+		double buyPrice = PriceUtil.getBuyPrice(event.getSignLine((short) 2));
+		double sellPrice = PriceUtil.getSellPrice(event.getSignLine((short) 2));
+		String itemName = ShopUtil.getItemName(event.getSignLine((short) 3));
 		long created = System.currentTimeMillis();
 		
 		try {
-			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("INSERT INTO chestshop_shop (world, x, y, z, tpx, tpy, tpz, tpyaw, tppitch, owner, owneruid, amount, buyprice, sellprice, itemname, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("INSERT INTO chestshop_shop (world, x, y, z, tpx, tpy, tpz, tpyaw, tppitch, owner, owneruuid, maxamount, buyprice, sellprice, itemname, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			st.setString(1, world);
 			st.setInt(2, x);
 			st.setInt(3, y);
@@ -89,8 +91,8 @@ public class ShopModel {
 			st.setFloat(8, tpYaw);
 			st.setFloat(9, tpPitch);
 			st.setString(10, owner);
-			st.setString(11, ownerUID);
-			st.setInt(12, amount);
+			st.setString(11, ownerUUID);
+			st.setInt(12, maxAmount);
 			st.setDouble(13, buyPrice);
 			st.setDouble(14, sellPrice);
 			st.setString(15, itemName);
@@ -205,8 +207,8 @@ public class ShopModel {
 					rs.getFloat("tpPitch")
 					);
 			owner = rs.getString("owner");
-			ownerUID = rs.getString("ownerUID");
-			amount = rs.getInt("amount");
+			ownerUUID = UUID.fromString(rs.getString("ownerUUID"));
+			maxAmount = rs.getInt("maxAmount");
 			buyPrice = rs.getDouble("buyprice");
 			sellPrice = rs.getDouble("sellprice");
 			itemName = rs.getString("itemname");
@@ -229,8 +231,8 @@ public class ShopModel {
 					+ "tpyaw = ?,"
 					+ "tppitch = ?,"
 					+ "owmer = ?,"
-					+ "owneruid = ?,"
-					+ "amount = ?,"
+					+ "owneruuid = ?,"
+					+ "maxamount = ?,"
 					+ "buyprice = ?,"
 					+ "sellprice = ?,"
 					+ "itemname = ?,"
@@ -245,8 +247,8 @@ public class ShopModel {
 			st.setFloat(8, tp.getYaw());
 			st.setFloat(9, tp.getPitch());
 			st.setString(10, owner);
-			st.setString(11, ownerUID);
-			st.setInt(12, amount);
+			st.setString(11, ownerUUID.toString());
+			st.setInt(12, maxAmount);
 			st.setDouble(13, buyPrice);
 			st.setDouble(14, sellPrice);
 			st.setString(15, itemName);
@@ -276,12 +278,12 @@ public class ShopModel {
 		return owner;
 	}
 	
-	public String getOwnerUID() {
-		return ownerUID;
+	public UUID getOwnerUUID() {
+		return ownerUUID;
 	}
 	
-	public int getAmount() {
-		return amount;
+	public int getMaxAmount() {
+		return maxAmount;
 	}
 	
 	public double getBuyPrice() {
@@ -311,12 +313,12 @@ public class ShopModel {
 	public void setOwner(String owner) {
 		this.owner = owner;
 		if(plugin.getServer().getPlayer(owner) != null) {
-			ownerUID = plugin.getServer().getPlayer(owner).getUniqueId().toString();
+			ownerUUID = plugin.getServer().getPlayer(owner).getUniqueId();
 		}
 	}
 	
-	public void setAmount(int amount) {
-		this.amount = amount;
+	public void setMaxAmount(int maxAmount) {
+		this.maxAmount = maxAmount;
 	}
 	
 	public void setBuyPrice(double buyPrice) {
