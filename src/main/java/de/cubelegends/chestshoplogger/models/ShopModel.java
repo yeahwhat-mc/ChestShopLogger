@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import com.Acrobot.Breeze.Utils.PriceUtil;
 import com.Acrobot.ChestShop.Events.ShopCreatedEvent;
@@ -71,7 +72,10 @@ public class ShopModel {
 		String owner = event.getSignLine((short) 0);
 		String ownerUUID = "";
 		if(plugin.getServer().getPlayer(owner) != null) {
-			ownerUUID = plugin.getServer().getPlayer(owner).getUniqueId().toString();
+			Player player = plugin.getServer().getPlayer(owner);
+			if(player != null) {
+				ownerUUID = player.getUniqueId().toString();
+			}
 		}
 		int maxAmount = Integer.parseInt(event.getSignLine((short) 1));
 		double buyPrice = PriceUtil.getBuyPrice(event.getSignLine((short) 2));
@@ -207,7 +211,13 @@ public class ShopModel {
 					rs.getFloat("tpPitch")
 					);
 			owner = rs.getString("owner");
-			ownerUUID = UUID.fromString(rs.getString("ownerUUID"));
+			try {
+				ownerUUID = UUID.fromString(rs.getString("owneruuid"));
+			} catch(IllegalArgumentException ex) {
+				
+			} catch(NullPointerException ex) {
+				
+			}
 			maxAmount = rs.getInt("maxAmount");
 			buyPrice = rs.getDouble("buyprice");
 			sellPrice = rs.getDouble("sellprice");
@@ -247,7 +257,11 @@ public class ShopModel {
 			st.setFloat(8, tp.getYaw());
 			st.setFloat(9, tp.getPitch());
 			st.setString(10, owner);
-			st.setString(11, ownerUUID.toString());
+			if(ownerUUID == null) {
+				st.setString(11, "");
+			} else {
+				st.setString(11, ownerUUID.toString());
+			}
 			st.setInt(12, maxAmount);
 			st.setDouble(13, buyPrice);
 			st.setDouble(14, sellPrice);
