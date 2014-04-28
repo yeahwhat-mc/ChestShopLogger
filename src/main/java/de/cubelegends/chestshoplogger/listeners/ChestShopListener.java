@@ -1,4 +1,4 @@
-package de.cubelegends.chestshoplogger.listener;
+package de.cubelegends.chestshoplogger.listeners;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

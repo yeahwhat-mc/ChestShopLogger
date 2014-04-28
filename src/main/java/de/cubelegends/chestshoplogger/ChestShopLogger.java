@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import de.cubelegends.chestshoplogger.cmds.ChestShopLoggerCmd;
 import de.cubelegends.chestshoplogger.db.DBHandler;
-import de.cubelegends.chestshoplogger.listener.ChestShopListener;
+import de.cubelegends.chestshoplogger.listeners.ChestShopListener;
 
 public class ChestShopLogger extends JavaPlugin {
 	
