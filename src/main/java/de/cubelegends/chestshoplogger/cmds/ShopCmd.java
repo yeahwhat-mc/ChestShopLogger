@@ -3,6 +3,7 @@ package de.cubelegends.chestshoplogger.cmds;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,6 +25,11 @@ public class ShopCmd implements CommandExecutor {
 		
 		if(args.length == 2 && args[0].equalsIgnoreCase("tp")) {
 			this.tp(sender, args[1]);
+			return true;			
+		}
+		
+		if(args.length == 2 && args[0].equalsIgnoreCase("coord")) {
+			this.coord(sender, args[1]);
 			return true;			
 		}
 		
@@ -65,6 +71,38 @@ public class ShopCmd implements CommandExecutor {
 		Player player = (Player) sender;
 		player.teleport(shop.getTP());
 		sender.sendMessage(ChestShopLogger.PREFIX + "Welcome to shop " + id + "!");
+		
+	}
+	
+	private void coord(CommandSender sender, String idStr) {
+		int id = 0;
+		
+		if(!(sender instanceof Player)) {
+			sender.sendMessage("This command can only be executed by a player!");
+			return;
+		}
+		
+		if(!sender.hasPermission("chestshoplogger.coord") && !sender.isOp()) {
+			sender.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");
+			return;
+		}
+		
+		try {
+			id = Integer.parseInt(idStr);
+		} catch (NumberFormatException e) {
+			sender.sendMessage(ChestShopLogger.PREFIX + "You've entered an invalid id!");
+			return;
+		}
+		
+		ShopModel shop = new ShopModel(plugin, id);
+		
+		if(shop.getID() == ShopModel.IDNOTFOUND) {
+			sender.sendMessage(ChestShopLogger.PREFIX + "There is no shop with the id " + id + "!");
+			return;
+		}
+
+		Location loc = shop.getLoc();
+		sender.sendMessage(ChestShopLogger.PREFIX + "Shop " + id + " is located in " + loc.getWorld() + " at " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + ".");
 		
 	}
 	

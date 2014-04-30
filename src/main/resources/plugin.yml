@@ -13,5 +13,7 @@ commands:
 permissions:
   chestshoplogger.tp:
     description: Teleportation permission
+  chestshoplogger.coord:
+    description: Coordinate permission
   chestshoplogger.find:
     description: Find permission
