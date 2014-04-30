@@ -9,3 +9,9 @@ depend: [ChestShop]
 commands:
   shop:
     description: ChestShopLogger command
+    
+permissions:
+  chestshoplogger.tp:
+    description: Teleportation permission
+  chestshoplogger.find:
+    description: Find permission
