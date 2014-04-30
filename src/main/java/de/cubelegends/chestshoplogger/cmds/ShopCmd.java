@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -28,8 +29,8 @@ public class ShopCmd implements CommandExecutor {
 			return true;			
 		}
 		
-		if(args.length == 2 && args[0].equalsIgnoreCase("coord")) {
-			this.coord(sender, args[1]);
+		if(args.length == 2 && args[0].equalsIgnoreCase("coords")) {
+			this.coords(sender, args[1]);
 			return true;			
 		}
 		
@@ -42,6 +43,7 @@ public class ShopCmd implements CommandExecutor {
 	}
 	
 	private void tp(CommandSender sender, String idStr) {
+		
 		int id = 0;
 		
 		if(!(sender instanceof Player)) {
@@ -67,6 +69,12 @@ public class ShopCmd implements CommandExecutor {
 			sender.sendMessage(ChestShopLogger.PREFIX + "There is no shop with the id " + id + "!");
 			return;
 		}
+		
+		Block blockAbove = new Location(shop.getTP().getWorld(), shop.getTP().getX(), shop.getTP().getY() + 1, shop.getTP().getZ()).getBlock();
+		if(shop.getTP().getBlock().getType().isSolid() || blockAbove.getType().isSolid()) {
+			sender.sendMessage(ChestShopLogger.PREFIX + "The destination is obstructed!");
+			return;
+		}
 
 		Player player = (Player) sender;
 		player.teleport(shop.getTP());
@@ -74,15 +82,11 @@ public class ShopCmd implements CommandExecutor {
 		
 	}
 	
-	private void coord(CommandSender sender, String idStr) {
+	private void coords(CommandSender sender, String idStr) {
+		
 		int id = 0;
 		
-		if(!(sender instanceof Player)) {
-			sender.sendMessage("This command can only be executed by a player!");
-			return;
-		}
-		
-		if(!sender.hasPermission("chestshoplogger.coord") && !sender.isOp()) {
+		if(!sender.hasPermission("chestshoplogger.coords") && !sender.isOp()) {
 			sender.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");
 			return;
 		}
@@ -102,11 +106,12 @@ public class ShopCmd implements CommandExecutor {
 		}
 
 		Location loc = shop.getLoc();
-		sender.sendMessage(ChestShopLogger.PREFIX + "Shop " + id + " is located in " + loc.getWorld() + " at " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + ".");
+		sender.sendMessage(ChestShopLogger.PREFIX + "Shop " + id + " is located in " + loc.getWorld().getName() + " at " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + ".");
 		
 	}
 	
 	private void find(CommandSender sender, String action, String dirtyName) {
+		
 		if(!sender.hasPermission("chestshoplogger.find") && !sender.isOp()) {
 			sender.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");
 			return;
