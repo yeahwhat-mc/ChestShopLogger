@@ -12,11 +12,11 @@ import de.cubelegends.chestshoplogger.ChestShopLogger;
 import de.cubelegends.chestshoplogger.models.ShopModel;
 import de.cubelegends.chestshoplogger.utils.ShopUtil;
 
-public class ChestShopLoggerCmd implements CommandExecutor {
+public class ShopCmd implements CommandExecutor {
 	
 	private ChestShopLogger plugin;
 	
-	public ChestShopLoggerCmd(ChestShopLogger plugin) {
+	public ShopCmd(ChestShopLogger plugin) {
 		this.plugin = plugin;
 	}
 	
