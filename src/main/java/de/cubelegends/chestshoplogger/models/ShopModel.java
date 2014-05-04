@@ -20,14 +20,13 @@ import de.cubelegends.chestshoplogger.helpers.ShopHelper;
 
 public class ShopModel {
 
-	public final static int IDNOTFOUND = 0;
 	public final static int BUYACTION = 0;
 	public final static int SELLACTION = 1;
 	
 	private ChestShopLogger plugin;
 	private DBHandler db;
 	
-	private int id = IDNOTFOUND;
+	private int id;
 	private Location loc;
 	private Location tp;
 	private String owner;
@@ -274,6 +273,10 @@ public class ShopModel {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean exists() {
+		return id != 0;
 	}
 	
 	public int getID() {

@@ -1,12 +1,10 @@
-package de.cubelegends.chestshoplogger.cmds;
+package de.cubelegends.chestshoplogger.managers;
 
 import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -15,35 +13,15 @@ import de.cubelegends.chestshoplogger.helpers.MathHelper;
 import de.cubelegends.chestshoplogger.helpers.ShopHelper;
 import de.cubelegends.chestshoplogger.models.ShopModel;
 
-public class ShopCmd implements CommandExecutor {
+public class ShopManager {
+
+private ChestShopLogger plugin;
 	
-	private ChestShopLogger plugin;
-	
-	public ShopCmd(ChestShopLogger plugin) {
+	public ShopManager(ChestShopLogger plugin) {
 		this.plugin = plugin;
 	}
 	
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		
-		if(args.length == 2 && args[0].equalsIgnoreCase("tp")) {
-			this.tp(sender, args[1]);
-			return true;			
-		}
-		
-		if(args.length == 2 && args[0].equalsIgnoreCase("coords")) {
-			this.coords(sender, args[1]);
-			return true;			
-		}
-		
-		if(args.length == 3 && args[0].equalsIgnoreCase("find")) {
-			this.find(sender, args[1], args[2]);
-			return true;			
-		}
-		
-		return false;
-	}
-	
-	private void tp(CommandSender sender, String idStr) {
+	public void tp(CommandSender sender, String idStr) {
 		
 		int id = 0;
 		
@@ -66,7 +44,7 @@ public class ShopCmd implements CommandExecutor {
 		
 		ShopModel shop = new ShopModel(plugin, id);
 		
-		if(shop.getID() == ShopModel.IDNOTFOUND) {
+		if(shop.exists()) {
 			sender.sendMessage(ChestShopLogger.PREFIX + "There is no shop with the id " + id + "!");
 			return;
 		}
@@ -83,7 +61,7 @@ public class ShopCmd implements CommandExecutor {
 		
 	}
 	
-	private void coords(CommandSender sender, String idStr) {
+	public void coords(CommandSender sender, String idStr) {
 		
 		int id = 0;
 		
@@ -101,7 +79,7 @@ public class ShopCmd implements CommandExecutor {
 		
 		ShopModel shop = new ShopModel(plugin, id);
 		
-		if(shop.getID() == ShopModel.IDNOTFOUND) {
+		if(shop.exists()) {
 			sender.sendMessage(ChestShopLogger.PREFIX + "There is no shop with the id " + id + "!");
 			return;
 		}
@@ -111,7 +89,7 @@ public class ShopCmd implements CommandExecutor {
 		
 	}
 	
-	private void find(CommandSender sender, String action, String dirtyName) {
+	public void find(CommandSender sender, String action, String dirtyName) {
 		
 		if(!sender.hasPermission("chestshoplogger.find") && !sender.isOp()) {
 			sender.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");
@@ -156,5 +134,5 @@ public class ShopCmd implements CommandExecutor {
 		}
 		
 	}
-
+	
 }

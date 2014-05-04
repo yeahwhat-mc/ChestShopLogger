@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import de.cubelegends.chestshoplogger.cmds.ShopCmd;
 import de.cubelegends.chestshoplogger.db.DBHandler;
 import de.cubelegends.chestshoplogger.listeners.ChestShopListener;
 
@@ -47,7 +46,7 @@ public class ChestShopLogger extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ChestShopListener(this), this);
 		
 		// Register command executor
-		getCommand("shop").setExecutor(new ShopCmd(this));
+		getCommand("shop").setExecutor(new CmdHandler(this));
 		
 	}
 	
