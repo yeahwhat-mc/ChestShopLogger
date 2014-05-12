@@ -21,43 +21,37 @@ private ChestShopLogger plugin;
 		this.plugin = plugin;
 	}
 	
-	public void tp(CommandSender sender, String idStr) {
+	public void tp(Player player, String idStr) {
 		
 		int id = 0;
 		
-		if(!(sender instanceof Player)) {
-			sender.sendMessage("This command can only be executed by a player!");
-			return;
-		}
-		
-		if(!sender.hasPermission("chestshoplogger.tp") && !sender.isOp()) {
-			sender.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");
+		if(!player.hasPermission("chestshoplogger.tp")) {
+			player.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");
 			return;
 		}
 		
 		try {
 			id = Integer.parseInt(idStr);
 		} catch (NumberFormatException e) {
-			sender.sendMessage(ChestShopLogger.PREFIX + "You've entered an invalid id!");
+			player.sendMessage(ChestShopLogger.PREFIX + "You've entered an invalid id!");
 			return;
 		}
 		
 		ShopModel shop = new ShopModel(plugin, id);
 		
 		if(shop.exists()) {
-			sender.sendMessage(ChestShopLogger.PREFIX + "There is no shop with the id " + id + "!");
+			player.sendMessage(ChestShopLogger.PREFIX + "There is no shop with the id " + id + "!");
 			return;
 		}
 		
 		Block blockAbove = new Location(shop.getTP().getWorld(), shop.getTP().getX(), shop.getTP().getY() + 1, shop.getTP().getZ()).getBlock();
 		if(shop.getTP().getBlock().getType().isSolid() || blockAbove.getType().isSolid()) {
-			sender.sendMessage(ChestShopLogger.PREFIX + "The destination is obstructed!");
+			player.sendMessage(ChestShopLogger.PREFIX + "The destination is obstructed!");
 			return;
 		}
 
-		Player player = (Player) sender;
 		player.teleport(shop.getTP());
-		sender.sendMessage(ChestShopLogger.PREFIX + "Welcome to shop " + id + "!");
+		player.sendMessage(ChestShopLogger.PREFIX + "Welcome to shop " + id + "!");
 		
 	}
 	
@@ -65,7 +59,7 @@ private ChestShopLogger plugin;
 		
 		int id = 0;
 		
-		if(!sender.hasPermission("chestshoplogger.coords") && !sender.isOp()) {
+		if(!sender.hasPermission("chestshoplogger.coords")) {
 			sender.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");
 			return;
 		}
@@ -91,7 +85,7 @@ private ChestShopLogger plugin;
 	
 	public void find(CommandSender sender, String action, String dirtyName) {
 		
-		if(!sender.hasPermission("chestshoplogger.find") && !sender.isOp()) {
+		if(!sender.hasPermission("chestshoplogger.find")) {
 			sender.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");
 			return;
 		}

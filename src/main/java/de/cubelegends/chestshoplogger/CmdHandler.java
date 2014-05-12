@@ -3,6 +3,7 @@ package de.cubelegends.chestshoplogger;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import de.cubelegends.chestshoplogger.managers.ShopManager;
 
@@ -18,9 +19,15 @@ public class CmdHandler implements CommandExecutor {
 		
 		ShopManager sm = new ShopManager(plugin);
 		
-		if(args.length == 2 && args[0].equalsIgnoreCase("tp")) {
-			sm.tp(sender, args[1]);
-			return true;			
+		if(sender instanceof Player) {
+			
+			Player player = (Player) sender;
+			
+			if(args.length == 2 && args[0].equalsIgnoreCase("tp")) {
+				sm.tp(player, args[1]);
+				return true;			
+			}
+			
 		}
 		
 		if(args.length == 2 && args[0].equalsIgnoreCase("coords")) {
