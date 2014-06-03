@@ -119,14 +119,22 @@ public class ChestShopLogger extends JavaPlugin {
 			
 			case 1:
 				PreparedStatement st = db.getConnection().prepareStatement(
-						"INSERT INTO chestshop_player (uuid, name) SELECT owneruuid, owner FROM chestshop_shop GROUP BY owneruuid;"
-						+ "INSERT INTO chestshop_player (uuid, name) SELECT clientuuid, client FROM chestshop_transaction GROUP BY clientuuid ON DUPLICATE KEY UPDATE uuid = uuid;"
+						"INSERT INTO chestshop_player (uuid, name) SELECT owneruuid, owner FROM chestshop_shop GROUP BY owneruuid"
 						);
 				st.execute();
 				st.close();
 				st = db.getConnection().prepareStatement(
-						"ALTER TABLE chestshop_shop DROP owner;"
-						+ "ALTER TABLE chestshop_transaction DROP client"
+						"INSERT INTO chestshop_player (uuid, name) SELECT clientuuid, client FROM chestshop_transaction GROUP BY clientuuid ON DUPLICATE KEY UPDATE uuid = uuid;"
+						);
+				st.execute();
+				st.close();
+				st = db.getConnection().prepareStatement(
+						"ALTER TABLE chestshop_shop DROP owner"
+						);
+				st.execute();
+				st.close();
+				st = db.getConnection().prepareStatement(
+						"ALTER TABLE chestshop_transaction DROP client"
 						);
 				st.execute();
 				st.close();
@@ -135,6 +143,11 @@ public class ChestShopLogger extends JavaPlugin {
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+		
+		if(this.getConfig().getInt("database.tableVersion") != 2) {
+			this.getConfig().set("database.tableVersion", 2);
+			this.saveConfig();
 		}
 	}
 
