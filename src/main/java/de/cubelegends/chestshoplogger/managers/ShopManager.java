@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import de.cubelegends.chestshoplogger.ChestShopLogger;
 import de.cubelegends.chestshoplogger.helpers.MathHelper;
 import de.cubelegends.chestshoplogger.helpers.ShopHelper;
+import de.cubelegends.chestshoplogger.models.PlayerModel;
 import de.cubelegends.chestshoplogger.models.ShopModel;
 
 public class ShopManager {
@@ -111,8 +112,9 @@ private ChestShopLogger plugin;
 		sender.sendMessage(ChatColor.DARK_GREEN + "========== Search results ==========");
 		sender.sendMessage(ChatColor.DARK_GRAY + "ID | Owner | Price | Price per item | Max. amount");
 		for(ShopModel shop : shops) {
+			PlayerModel ownerModel = new PlayerModel(plugin, shop.getOwnerUUID());
 			String msg = ChatColor.GREEN + "" + shop.getID();
-			msg = msg + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + shop.getOwner();
+			msg = msg + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + ownerModel.getName();
 			switch(action) {
 			case "sell":
 				msg = msg + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + shop.getSellPrice();

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import com.Acrobot.Breeze.Utils.PriceUtil;
 import com.Acrobot.ChestShop.Events.ShopCreatedEvent;
@@ -29,7 +28,6 @@ public class ShopModel {
 	private int id;
 	private Location loc;
 	private Location tp;
-	private String owner;
 	private UUID ownerUUID;
 	private int maxAmount;
 	private double buyPrice;
@@ -68,14 +66,8 @@ public class ShopModel {
 		double tpZ = event.getPlayer().getLocation().getZ();
 		float tpYaw = event.getPlayer().getLocation().getYaw();
 		float tpPitch = event.getPlayer().getLocation().getPitch();
-		String owner = event.getSignLine((short) 0);
-		String ownerUUID = "";
-		if(plugin.getServer().getPlayer(owner) != null) {
-			Player player = plugin.getServer().getPlayer(owner);
-			if(player != null) {
-				ownerUUID = player.getUniqueId().toString();
-			}
-		}
+		String ownerName = event.getSignLine((short) 0);
+		UUID ownerUUID = PlayerModel.getUUID(plugin, ownerName);
 		int maxAmount = Integer.parseInt(event.getSignLine((short) 1));
 		double buyPrice = PriceUtil.getBuyPrice(event.getSignLine((short) 2));
 		double sellPrice = PriceUtil.getSellPrice(event.getSignLine((short) 2));
@@ -93,8 +85,9 @@ public class ShopModel {
 			st.setDouble(7, tpZ);
 			st.setFloat(8, tpYaw);
 			st.setFloat(9, tpPitch);
-			st.setString(10, owner);
-			st.setString(11, ownerUUID);
+			st.setString(10, ownerName);
+			if(ownerUUID != null) st.setString(11, ownerUUID.toString());
+			else st.setString(11, null);
 			st.setInt(12, maxAmount);
 			st.setDouble(13, buyPrice);
 			st.setDouble(14, sellPrice);
@@ -209,7 +202,6 @@ public class ShopModel {
 					rs.getFloat("tpYaw"),
 					rs.getFloat("tpPitch")
 					);
-			owner = rs.getString("owner");
 			try {
 				ownerUUID = UUID.fromString(rs.getString("owneruuid"));
 			} catch(IllegalArgumentException ex) {
@@ -239,7 +231,6 @@ public class ShopModel {
 					+ "tpz = ?,"
 					+ "tpyaw = ?,"
 					+ "tppitch = ?,"
-					+ "owmer = ?,"
 					+ "owneruuid = ?,"
 					+ "maxamount = ?,"
 					+ "buyprice = ?,"
@@ -255,18 +246,17 @@ public class ShopModel {
 			st.setDouble(7, tp.getZ());
 			st.setFloat(8, tp.getYaw());
 			st.setFloat(9, tp.getPitch());
-			st.setString(10, owner);
 			if(ownerUUID == null) {
-				st.setString(11, "");
+				st.setString(10, "");
 			} else {
-				st.setString(11, ownerUUID.toString());
+				st.setString(10, ownerUUID.toString());
 			}
-			st.setInt(12, maxAmount);
-			st.setDouble(13, buyPrice);
-			st.setDouble(14, sellPrice);
-			st.setString(15, itemName);
-			st.setLong(16, created);
-			st.setInt(17, id);
+			st.setInt(11, maxAmount);
+			st.setDouble(12, buyPrice);
+			st.setDouble(13, sellPrice);
+			st.setString(14, itemName);
+			st.setLong(15, created);
+			st.setInt(16, id);
 			st.execute();
 			st.close();
 			db.closeConnection();
@@ -289,10 +279,6 @@ public class ShopModel {
 	
 	public Location getTP() {
 		return tp;
-	}
-	
-	public String getOwner() {
-		return owner;
 	}
 	
 	public UUID getOwnerUUID() {
@@ -327,11 +313,8 @@ public class ShopModel {
 		this.tp = tp;
 	}
 	
-	public void setOwner(String owner) {
-		this.owner = owner;
-		if(plugin.getServer().getPlayer(owner) != null) {
-			ownerUUID = plugin.getServer().getPlayer(owner).getUniqueId();
-		}
+	public void setOwnerUUID(UUID ownerUUID) {
+		this.ownerUUID = ownerUUID;
 	}
 	
 	public void setMaxAmount(int maxAmount) {

@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import de.cubelegends.chestshoplogger.db.DBHandler;
 import de.cubelegends.chestshoplogger.listeners.ChestShopListener;
+import de.cubelegends.chestshoplogger.listeners.JoinListener;
 
 public class ChestShopLogger extends JavaPlugin {
 	
@@ -44,6 +45,7 @@ public class ChestShopLogger extends JavaPlugin {
 		
 		// Register events
 		getServer().getPluginManager().registerEvents(new ChestShopListener(this), this);
+		getServer().getPluginManager().registerEvents(new JoinListener(this), this);
 		
 		// Register command executor
 		getCommand("shop").setExecutor(new CmdHandler(this));
@@ -72,7 +74,6 @@ public class ChestShopLogger extends JavaPlugin {
 					+ "tpz DOUBLE,"
 					+ "tpyaw DOUBLE,"
 					+ "tppitch DOUBLE,"
-					+ "owner VARCHAR(50),"
 					+ "owneruuid VARCHAR(50),"
 					+ "maxamount INT,"
 					+ "buyprice DOUBLE,"
@@ -87,12 +88,19 @@ public class ChestShopLogger extends JavaPlugin {
 					"CREATE TABLE IF NOT EXISTS chestshop_transaction ("
 					+ "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,"
 					+ "shopid INT,"
-					+ "client VARCHAR(50),"
 					+ "clientuuid VARCHAR(50),"
 					+ "type VARCHAR(10),"
 					+ "amount INT,"
 					+ "price DOUBLE,"
 					+ "date BIGINT"
+					+ ");"
+					);
+			st.execute();
+			st.close();
+			st = db.getConnection().prepareStatement(
+					"CREATE TABLE IF NOT EXISTS chestshop_player ("
+					+ "uuid VARCHAR(50) PRIMARY KEY,"
+					+ "name VARCHAR(50)"
 					+ ");"
 					);
 			st.execute();
