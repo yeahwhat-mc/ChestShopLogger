@@ -75,7 +75,7 @@ public class ShopModel {
 		long created = System.currentTimeMillis();
 		
 		try {
-			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("INSERT INTO chestshop_shop (world, x, y, z, tpx, tpy, tpz, tpyaw, tppitch, owner, owneruuid, maxamount, buyprice, sellprice, itemname, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("INSERT INTO chestshop_shop (world, x, y, z, tpx, tpy, tpz, tpyaw, tppitch, owneruuid, maxamount, buyprice, sellprice, itemname, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			st.setString(1, world);
 			st.setInt(2, x);
 			st.setInt(3, y);
@@ -85,14 +85,13 @@ public class ShopModel {
 			st.setDouble(7, tpZ);
 			st.setFloat(8, tpYaw);
 			st.setFloat(9, tpPitch);
-			st.setString(10, ownerName);
-			if(ownerUUID != null) st.setString(11, ownerUUID.toString());
-			else st.setString(11, null);
-			st.setInt(12, maxAmount);
-			st.setDouble(13, buyPrice);
-			st.setDouble(14, sellPrice);
-			st.setString(15, itemName);
-			st.setLong(16, created);
+			if(ownerUUID != null) st.setString(10, ownerUUID.toString());
+			else st.setString(10, null);
+			st.setInt(11, maxAmount);
+			st.setDouble(12, buyPrice);
+			st.setDouble(13, sellPrice);
+			st.setString(14, itemName);
+			st.setLong(15, created);
 			st.execute();
 			st.close();
 			plugin.getDBHandler().closeConnection();
