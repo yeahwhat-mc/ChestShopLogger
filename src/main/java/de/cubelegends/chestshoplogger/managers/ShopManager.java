@@ -7,10 +7,11 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import com.Acrobot.Breeze.Utils.MaterialUtil;
 
 import de.cubelegends.chestshoplogger.ChestShopLogger;
-import de.cubelegends.chestshoplogger.helpers.MathHelper;
-import de.cubelegends.chestshoplogger.helpers.ShopHelper;
 import de.cubelegends.chestshoplogger.models.PlayerModel;
 import de.cubelegends.chestshoplogger.models.ShopModel;
 
@@ -91,44 +92,69 @@ private ChestShopLogger plugin;
 			return;
 		}
 		
-		String itemName = ShopHelper.getItemName(dirtyName);
+		String itemName = getItemName(dirtyName);
 		
 		if(itemName.equals("Unknown")) {
 			sender.sendMessage(ChestShopLogger.PREFIX + "There is no item, called " + dirtyName + "!");
 			return;
 		}
 		
-		List<ShopModel> shops;
+		List<ShopModel> shops = null;
 		
 		switch(action) {
 		case "sell":
-			shops = ShopModel.findShops(plugin, ShopModel.SELLACTION, itemName);			
+			shops = ShopModel.findShops(plugin, ShopModel.SELLACTION, itemName);
+			sender.sendMessage(ChatColor.DARK_GREEN + "========== Sell " + itemName + " ==========");
 			break;
-		default:
+		case "buy":
 			shops = ShopModel.findShops(plugin, ShopModel.BUYACTION, itemName);
+			sender.sendMessage(ChatColor.DARK_GREEN + "========== Buy " + itemName + " ==========");
 			break;
 		}
 		
-		sender.sendMessage(ChatColor.DARK_GREEN + "========== Search results ==========");
-		sender.sendMessage(ChatColor.DARK_GRAY + "ID | Owner | Price | Price per item | Max. amount");
-		for(ShopModel shop : shops) {
-			PlayerModel ownerModel = new PlayerModel(plugin, shop.getOwnerUUID());
-			String msg = ChatColor.GREEN + "" + shop.getID();
-			msg = msg + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + ownerModel.getName();
-			switch(action) {
-			case "sell":
-				msg = msg + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + shop.getSellPrice();
-				msg = msg + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + MathHelper.round(shop.getSellPrice() / shop.getMaxAmount(), 2);
-				break;
-			default:
-				msg = msg + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + shop.getBuyPrice();
-				msg = msg + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + MathHelper.round(shop.getBuyPrice() / shop.getMaxAmount(), 2);
-				break;
-			}
-			msg = msg + ChatColor.DARK_GRAY + " | " + ChatColor.GRAY + shop.getMaxAmount();
-			sender.sendMessage(msg);
+		if(shops == null) {
+			sender.sendMessage(ChestShopLogger.PREFIX + "\"" + action + "\" is not a valid search option!");
+			return;
 		}
 		
+		if(shops.size() == 0) {
+			sender.sendMessage(ChatColor.GRAY + "There were no results, sorry! :(");
+		}
+		
+		for(ShopModel shop : shops) {
+			
+			PlayerModel ownerModel = new PlayerModel(plugin, shop.getOwnerUUID());
+			String msg = "";
+			switch(action) {
+			
+			case "sell":
+				msg = msg + ChatColor.GRAY + "Sell " + ChatColor.GREEN + shop.getMaxAmount() + "x ";
+				msg = msg + ChatColor.GRAY + "for " + ChatColor.GREEN + shop.getSellPrice() + " ";
+				msg = msg + ChatColor.GRAY + "to " + ChatColor.GREEN + ownerModel.getName() + " ";
+				msg = msg + ChatColor.GRAY + "at " + ChatColor.YELLOW + "#" + shop.getID();
+				break;
+				
+			case "buy":
+				msg = msg + ChatColor.GRAY + "Buy " + ChatColor.GREEN + shop.getMaxAmount() + "x ";
+				msg = msg + ChatColor.GRAY + "for " + ChatColor.GREEN + shop.getBuyPrice() + " ";
+				msg = msg + ChatColor.GRAY + "from " + ChatColor.GREEN + ownerModel.getName() + " ";
+				msg = msg + ChatColor.GRAY + "at " + ChatColor.YELLOW + "#" + shop.getID();
+				break;
+				
+			}
+			sender.sendMessage(msg);
+			
+		}
+		
+	}
+	
+	public static String getItemName(String dirtyName) {
+		String itemName = "Unknown";
+		ItemStack itemStack = MaterialUtil.getItem(dirtyName);		
+		if(itemStack != null) {
+			itemName = MaterialUtil.getName(itemStack, true);
+		}		
+		return itemName;
 	}
 	
 }

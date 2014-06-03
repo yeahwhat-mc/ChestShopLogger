@@ -15,7 +15,7 @@ import com.Acrobot.ChestShop.Events.ShopDestroyedEvent;
 
 import de.cubelegends.chestshoplogger.ChestShopLogger;
 import de.cubelegends.chestshoplogger.db.DBHandler;
-import de.cubelegends.chestshoplogger.helpers.ShopHelper;
+import de.cubelegends.chestshoplogger.managers.ShopManager;
 
 public class ShopModel {
 
@@ -71,7 +71,7 @@ public class ShopModel {
 		int maxAmount = Integer.parseInt(event.getSignLine((short) 1));
 		double buyPrice = PriceUtil.getBuyPrice(event.getSignLine((short) 2));
 		double sellPrice = PriceUtil.getSellPrice(event.getSignLine((short) 2));
-		String itemName = ShopHelper.getItemName(event.getSignLine((short) 3));
+		String itemName = ShopManager.getItemName(event.getSignLine((short) 3));
 		long created = System.currentTimeMillis();
 		
 		try {
