@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.cubelegends</groupId>
 	<artifactId>chestshoplogger</artifactId>
-	<version>0.1.4-SNAPSHOT</version>
+	<version>0.1.5-SNAPSHOT</version>
 	<build>
 		<plugins>
 			<plugin>
