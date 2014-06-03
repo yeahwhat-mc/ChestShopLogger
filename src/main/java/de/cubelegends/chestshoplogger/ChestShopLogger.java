@@ -1,10 +1,12 @@
 package de.cubelegends.chestshoplogger;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.mcstats.Metrics;
 
 import de.cubelegends.chestshoplogger.db.DBHandler;
 import de.cubelegends.chestshoplogger.listeners.ChestShopListener;
@@ -19,6 +21,7 @@ public class ChestShopLogger extends JavaPlugin {
 	public void onEnable() {
 		
 		// Load config
+		this.getConfig().addDefault("general.metrics", true);
 		this.getConfig().addDefault("database.host", "localhost");
 		this.getConfig().addDefault("database.port", 3306);
 		this.getConfig().addDefault("database.user", "root");
@@ -50,6 +53,16 @@ public class ChestShopLogger extends JavaPlugin {
 		
 		// Register command executor
 		getCommand("shop").setExecutor(new CmdHandler(this));
+		
+		// Plugin metrics
+		if(this.getConfig().getBoolean("general.metrics")) {
+			try {
+			    Metrics metrics = new Metrics(this);
+			    metrics.start();
+			} catch (IOException e) {
+			    // Failed to submit the stats :-(
+			}
+		}
 		
 	}
 	
