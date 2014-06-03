@@ -24,7 +24,7 @@ public class ChestShopLogger extends JavaPlugin {
 		this.getConfig().addDefault("database.user", "root");
 		this.getConfig().addDefault("database.password", "");
 		this.getConfig().addDefault("database.database", "bukkit");
-		this.getConfig().addDefault("database.tableVersion", 1);
+		this.getConfig().addDefault("database.tableVersion", 2);
 		this.getConfig().options().copyDefaults(true);
 		this.saveConfig();
 						
@@ -41,6 +41,7 @@ public class ChestShopLogger extends JavaPlugin {
 			return;
 		}
 		setupTables();
+		updateTables();
 		db.closeConnection();
 		
 		// Register events
@@ -106,6 +107,32 @@ public class ChestShopLogger extends JavaPlugin {
 			st.execute();
 			st.close();
 			db.closeConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void updateTables() {
+		try {
+			
+			switch(this.getConfig().getInt("database.tableVersion")) {
+			
+			case 1:
+				PreparedStatement st = db.getConnection().prepareStatement(
+						"INSERT INTO chestshop_player (uuid, name) SELECT owneruuid, owner FROM chestshop_shop GROUP BY owneruuid;"
+						+ "INSERT INTO chestshop_player (uuid, name) SELECT clientuuid, client FROM chestshop_transaction GROUP BY clientuuid ON DUPLICATE KEY UPDATE uuid = uuid;"
+						);
+				st.execute();
+				st.close();
+				st = db.getConnection().prepareStatement(
+						"ALTER TABLE chestshop_shop DROP owner;"
+						+ "ALTER TABLE chestshop_transaction DROP client"
+						);
+				st.execute();
+				st.close();
+			
+			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
