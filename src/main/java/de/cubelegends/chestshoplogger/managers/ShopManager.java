@@ -41,8 +41,8 @@ private ChestShopLogger plugin;
 		
 		ShopModel shop = new ShopModel(plugin, id);
 		
-		if(shop.exists()) {
-			player.sendMessage(ChestShopLogger.PREFIX + "There is no shop with the id " + id + "!");
+		if(!shop.exists()) {
+			player.sendMessage(ChestShopLogger.PREFIX + "There is no shop " + getIDString(id) + "!");
 			return;
 		}
 		
@@ -53,7 +53,7 @@ private ChestShopLogger plugin;
 		}
 
 		player.teleport(shop.getTP());
-		player.sendMessage(ChestShopLogger.PREFIX + "Welcome to shop " + id + "!");
+		player.sendMessage(ChestShopLogger.PREFIX + "Welcome to shop " + getIDString(id) + "!");
 		
 	}
 	
@@ -75,13 +75,13 @@ private ChestShopLogger plugin;
 		
 		ShopModel shop = new ShopModel(plugin, id);
 		
-		if(shop.exists()) {
-			sender.sendMessage(ChestShopLogger.PREFIX + "There is no shop with the id " + id + "!");
+		if(!shop.exists()) {
+			sender.sendMessage(ChestShopLogger.PREFIX + "There is no shop " + getIDString(id) + "!");
 			return;
 		}
 
 		Location loc = shop.getLoc();
-		sender.sendMessage(ChestShopLogger.PREFIX + "Shop " + id + " is located in " + loc.getWorld().getName() + " at " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + ".");
+		sender.sendMessage(ChestShopLogger.PREFIX + "Shop " + getIDString(id) + " is located in " + loc.getWorld().getName() + " at " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + ".");
 		
 	}
 	
@@ -131,14 +131,14 @@ private ChestShopLogger plugin;
 				msg = msg + ChatColor.GRAY + "Sell " + ChatColor.GREEN + shop.getMaxAmount() + "x ";
 				msg = msg + ChatColor.GRAY + "for " + ChatColor.GREEN + shop.getSellPrice() + " ";
 				msg = msg + ChatColor.GRAY + "to " + ChatColor.GREEN + ownerModel.getName() + " ";
-				msg = msg + ChatColor.GRAY + "at " + ChatColor.YELLOW + "#" + shop.getID();
+				msg = msg + ChatColor.GRAY + "at " + getIDString(shop.getID());
 				break;
 				
 			case "buy":
 				msg = msg + ChatColor.GRAY + "Buy " + ChatColor.GREEN + shop.getMaxAmount() + "x ";
 				msg = msg + ChatColor.GRAY + "for " + ChatColor.GREEN + shop.getBuyPrice() + " ";
 				msg = msg + ChatColor.GRAY + "from " + ChatColor.GREEN + ownerModel.getName() + " ";
-				msg = msg + ChatColor.GRAY + "at " + ChatColor.YELLOW + "#" + shop.getID();
+				msg = msg + ChatColor.GRAY + "at " + getIDString(shop.getID());
 				break;
 				
 			}
@@ -155,6 +155,10 @@ private ChestShopLogger plugin;
 			itemName = MaterialUtil.getName(itemStack, true);
 		}		
 		return itemName;
+	}
+	
+	private String getIDString(int id) {
+		return ChatColor.YELLOW + "#" + id + ChatColor.GRAY + "";
 	}
 	
 }
