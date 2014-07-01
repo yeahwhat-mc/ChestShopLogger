@@ -3,15 +3,18 @@ package de.cubelegends.chestshoplogger.models;
 import com.Acrobot.Breeze.Utils.PriceUtil;
 import com.Acrobot.ChestShop.Events.ShopCreatedEvent;
 import com.Acrobot.ChestShop.Events.ShopDestroyedEvent;
+
 import de.cubelegends.chestshoplogger.ChestShopLogger;
-import de.cubelegends.chestshoplogger.db.DBHandler;
 import de.cubelegends.chestshoplogger.managers.ShopManager;
+
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -22,7 +25,6 @@ public class ShopModel {
 	public final static int SELLACTION = 1;
 	
 	private ChestShopLogger plugin;
-	private DBHandler db;
 	
 	private int id;
 	private Location loc;
@@ -36,22 +38,16 @@ public class ShopModel {
 
 	public ShopModel(ChestShopLogger plugin, int id) {
 		this.plugin = plugin;
-		this.db = plugin.getDBHandler();
-		
 		fetchData(id);
 	}
 	
 	public ShopModel(ChestShopLogger plugin, Location loc) {
 		this.plugin = plugin;
-		this.db = plugin.getDBHandler();
-		
 		fetchData(loc);
 	}
 	
 	public ShopModel(ChestShopLogger plugin, ResultSet rs) {
 		this.plugin = plugin;
-		this.db = plugin.getDBHandler();
-		
 		fetchData(rs);
 	}
 	
@@ -78,7 +74,9 @@ public class ShopModel {
 		long created = System.currentTimeMillis();
 		
 		try {
-			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("INSERT INTO chestshop_shop (world, x, y, z, tpx, tpy, tpz, tpyaw, tppitch, owneruuid, maxamount, buyprice, sellprice, itemname, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			
+			Connection con = plugin.getDBHandler().open();
+			PreparedStatement st = con.prepareStatement("INSERT INTO chestshop_shop (world, x, y, z, tpx, tpy, tpz, tpyaw, tppitch, owneruuid, maxamount, buyprice, sellprice, itemname, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			st.setString(1, world);
 			st.setInt(2, x);
 			st.setInt(3, y);
@@ -97,7 +95,8 @@ public class ShopModel {
 			st.setLong(15, created);
 			st.execute();
 			st.close();
-			plugin.getDBHandler().closeConnection();
+			con.close();
+			
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}		
@@ -107,15 +106,18 @@ public class ShopModel {
 		ShopModel shop = new ShopModel(plugin, e.getSign().getLocation());
 		
 		try {
-			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("DELETE FROM chestshop_shop WHERE id = ?");
+			
+			Connection con = plugin.getDBHandler().open();
+			PreparedStatement st = con.prepareStatement("DELETE FROM chestshop_shop WHERE id = ?");
 			st.setInt(1, shop.getID());
 			st.execute();
 			st.close();
-			st = plugin.getDBHandler().getConnection().prepareStatement("DELETE FROM chestshop_transaction WHERE shopid = ?");
+			st = con.prepareStatement("DELETE FROM chestshop_transaction WHERE shopid = ?");
 			st.setInt(1, shop.getID());
 			st.execute();
 			st.close();
-			plugin.getDBHandler().closeConnection();
+			con.close();
+			
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
@@ -125,13 +127,15 @@ public class ShopModel {
 		List<ShopModel> shops = new ArrayList<ShopModel>();
 		
 		try {
+			
+			Connection con = plugin.getDBHandler().open();
 			PreparedStatement st = null;
 			switch(action) {
 			case BUYACTION:
-				st = plugin.getDBHandler().getConnection().prepareStatement("SELECT * FROM chestshop_shop WHERE itemname = ? AND buyprice != -1 ORDER BY buyprice / maxamount ASC");
+				st = con.prepareStatement("SELECT * FROM chestshop_shop WHERE itemname = ? AND buyprice != -1 ORDER BY buyprice / maxamount ASC");
 				break;
 			case SELLACTION:
-				st = plugin.getDBHandler().getConnection().prepareStatement("SELECT * FROM chestshop_shop WHERE itemname = ? AND sellprice != -1 ORDER BY sellprice / maxamount DESC");
+				st = con.prepareStatement("SELECT * FROM chestshop_shop WHERE itemname = ? AND sellprice != -1 ORDER BY sellprice / maxamount DESC");
 				break;
 			}
 			st.setString(1, itemName);
@@ -144,7 +148,8 @@ public class ShopModel {
 			
 			rs.close();
 			st.close();
-			plugin.getDBHandler().closeConnection();
+			con.close();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -154,7 +159,9 @@ public class ShopModel {
 	
 	public void fetchData(int id) {
 		try {
-			PreparedStatement st = db.getConnection().prepareStatement("SELECT * FROM chestshop_shop WHERE id = ?");
+
+			Connection con = plugin.getDBHandler().open();
+			PreparedStatement st = con.prepareStatement("SELECT * FROM chestshop_shop WHERE id = ?");
 			st.setInt(1, id);
 			ResultSet rs = st.executeQuery();
 			if(rs.next()) {
@@ -162,7 +169,8 @@ public class ShopModel {
 			}
 			rs.close();
 			st.close();
-			db.closeConnection();
+			con.close();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -170,7 +178,9 @@ public class ShopModel {
 	
 	public void fetchData(Location loc) {
 		try {
-			PreparedStatement st = db.getConnection().prepareStatement("SELECT * FROM chestshop_shop WHERE world = ? AND x = ? AND y = ? AND z = ?");
+			
+			Connection con = plugin.getDBHandler().open();
+			PreparedStatement st = con.prepareStatement("SELECT * FROM chestshop_shop WHERE world = ? AND x = ? AND y = ? AND z = ?");
 			st.setString(1, loc.getWorld().getName());
 			st.setInt(2, loc.getBlockX());
 			st.setInt(3, loc.getBlockY());
@@ -181,7 +191,8 @@ public class ShopModel {
 			}
 			rs.close();
 			st.close();
-			db.closeConnection();
+			con.close();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -223,7 +234,9 @@ public class ShopModel {
 	
 	public void pushData() {
 		try {
-			PreparedStatement st = db.getConnection().prepareStatement("UPDATE chestshop_shop SET "
+			
+			Connection con = plugin.getDBHandler().open();
+			PreparedStatement st = con.prepareStatement("UPDATE chestshop_shop SET "
 					+ "world = ?,"
 					+ "x = ?,"
 					+ "y = ?,"
@@ -261,7 +274,8 @@ public class ShopModel {
 			st.setInt(16, id);
 			st.execute();
 			st.close();
-			db.closeConnection();
+			con.close();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -1,6 +1,7 @@
 package de.cubelegends.chestshoplogger;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -39,13 +40,18 @@ public class ChestShopLogger extends JavaPlugin {
 				this.getConfig().getString("database.password"),
 				this.getConfig().getString("database.database")
 				);
-		if(db.getConnection() == null) {
+		Connection con = db.open();
+		if(con == null) {
 			this.getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
-		setupTables();
-		updateTables();
-		db.closeConnection();
+		setupTables(con);
+		updateTables(con);
+		try {
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 		// Register events
 		getServer().getPluginManager().registerEvents(new ChestShopListener(this), this);
@@ -74,9 +80,9 @@ public class ChestShopLogger extends JavaPlugin {
 		return db;
 	}
 	
-	private void setupTables() {
+	private void setupTables(Connection con) {
 		try {
-			PreparedStatement st = db.getConnection().prepareStatement(
+			PreparedStatement st = con.prepareStatement(
 					"CREATE TABLE IF NOT EXISTS chestshop_shop ("
 					+ "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,"
 					+ "world VARCHAR(50),"
@@ -98,7 +104,7 @@ public class ChestShopLogger extends JavaPlugin {
 					);
 			st.execute();
 			st.close();
-			st = db.getConnection().prepareStatement(
+			st = con.prepareStatement(
 					"CREATE TABLE IF NOT EXISTS chestshop_transaction ("
 					+ "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,"
 					+ "shopid INT,"
@@ -111,7 +117,7 @@ public class ChestShopLogger extends JavaPlugin {
 					);
 			st.execute();
 			st.close();
-			st = db.getConnection().prepareStatement(
+			st = con.prepareStatement(
 					"CREATE TABLE IF NOT EXISTS chestshop_player ("
 					+ "uuid VARCHAR(50) PRIMARY KEY,"
 					+ "name VARCHAR(50)"
@@ -119,34 +125,33 @@ public class ChestShopLogger extends JavaPlugin {
 					);
 			st.execute();
 			st.close();
-			db.closeConnection();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private void updateTables() {
+	private void updateTables(Connection con) {
 		try {
 			
 			switch(this.getConfig().getInt("database.tableVersion")) {
 			
 			case 1:
-				PreparedStatement st = db.getConnection().prepareStatement(
+				PreparedStatement st = con.prepareStatement(
 						"INSERT INTO chestshop_player (uuid, name) SELECT owneruuid, owner FROM chestshop_shop GROUP BY owneruuid"
 						);
 				st.execute();
 				st.close();
-				st = db.getConnection().prepareStatement(
+				st = con.prepareStatement(
 						"INSERT INTO chestshop_player (uuid, name) SELECT clientuuid, client FROM chestshop_transaction GROUP BY clientuuid ON DUPLICATE KEY UPDATE uuid = uuid;"
 						);
 				st.execute();
 				st.close();
-				st = db.getConnection().prepareStatement(
+				st = con.prepareStatement(
 						"ALTER TABLE chestshop_shop DROP owner"
 						);
 				st.execute();
 				st.close();
-				st = db.getConnection().prepareStatement(
+				st = con.prepareStatement(
 						"ALTER TABLE chestshop_transaction DROP client"
 						);
 				st.execute();

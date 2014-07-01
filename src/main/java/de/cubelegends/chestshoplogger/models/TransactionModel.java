@@ -1,5 +1,6 @@
 package de.cubelegends.chestshoplogger.models;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -36,8 +37,10 @@ public class TransactionModel {
 		}
 		
 		if(shop.getID() != 0) {
-			try {			
-				PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("INSERT INTO chestshop_transaction (shopid, clientuuid, type, amount, price, date) VALUES(?, ?, ?, ?, ?, ?)");
+			try {
+				
+				Connection con = plugin.getDBHandler().open();
+				PreparedStatement st = con.prepareStatement("INSERT INTO chestshop_transaction (shopid, clientuuid, type, amount, price, date) VALUES(?, ?, ?, ?, ?, ?)");
 				st.setInt(1, shop.getID());
 				st.setString(2, event.getClient().getUniqueId().toString());
 				st.setString(3, type);
@@ -46,7 +49,8 @@ public class TransactionModel {
 				st.setLong(6, date);
 				st.execute();
 				st.close();
-				plugin.getDBHandler().closeConnection();
+				con.close();
+				
 			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}
