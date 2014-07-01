@@ -1,21 +1,20 @@
 package de.cubelegends.chestshoplogger.models;
 
+import com.Acrobot.Breeze.Utils.PriceUtil;
+import com.Acrobot.ChestShop.Events.ShopCreatedEvent;
+import com.Acrobot.ChestShop.Events.ShopDestroyedEvent;
+import de.cubelegends.chestshoplogger.ChestShopLogger;
+import de.cubelegends.chestshoplogger.db.DBHandler;
+import de.cubelegends.chestshoplogger.managers.ShopManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import org.bukkit.Location;
-
-import com.Acrobot.Breeze.Utils.PriceUtil;
-import com.Acrobot.ChestShop.Events.ShopCreatedEvent;
-import com.Acrobot.ChestShop.Events.ShopDestroyedEvent;
-
-import de.cubelegends.chestshoplogger.ChestShopLogger;
-import de.cubelegends.chestshoplogger.db.DBHandler;
-import de.cubelegends.chestshoplogger.managers.ShopManager;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 
 public class ShopModel {
 
@@ -57,21 +56,25 @@ public class ShopModel {
 	}
 	
 	public static void create(ChestShopLogger plugin, ShopCreatedEvent event) {
-		String world = event.getSign().getWorld().getName();	
-		int x = event.getSign().getX();
-		int y = event.getSign().getY();
-		int z = event.getSign().getZ();
-		double tpX = event.getPlayer().getLocation().getX();
-		double tpY = event.getPlayer().getLocation().getY();
-		double tpZ = event.getPlayer().getLocation().getZ();
-		float tpYaw = event.getPlayer().getLocation().getYaw();
-		float tpPitch = event.getPlayer().getLocation().getPitch();
-		String ownerName = event.getSignLine((short) 0);
+		create(plugin, event.getSign(), event.getPlayer());
+	}
+        
+        public static void create(ChestShopLogger plugin, Sign sign, Player player) {
+		String world = sign.getWorld().getName();	
+		int x = sign.getX();
+		int y = sign.getY();
+		int z = sign.getZ();
+		double tpX = player.getLocation().getX();
+		double tpY = player.getLocation().getY();
+		double tpZ = player.getLocation().getZ();
+		float tpYaw = player.getLocation().getYaw();
+		float tpPitch = player.getLocation().getPitch();
+		String ownerName = sign.getLine(0);
 		UUID ownerUUID = PlayerModel.getUUID(plugin, ownerName);
-		int maxAmount = Integer.parseInt(event.getSignLine((short) 1));
-		double buyPrice = PriceUtil.getBuyPrice(event.getSignLine((short) 2));
-		double sellPrice = PriceUtil.getSellPrice(event.getSignLine((short) 2));
-		String itemName = ShopManager.getItemName(event.getSignLine((short) 3));
+		int maxAmount = Integer.parseInt(sign.getLine(1));
+		double buyPrice = PriceUtil.getBuyPrice(sign.getLine(2));
+		double sellPrice = PriceUtil.getSellPrice(sign.getLine(2));
+		String itemName = ShopManager.getItemName(sign.getLine(3));
 		long created = System.currentTimeMillis();
 		
 		try {
