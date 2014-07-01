@@ -60,6 +60,10 @@ public class PlayerModel {
 		}
 	}
 	
+	public static boolean exists(ChestShopLogger plugin, String name) {
+		return getUUID(plugin, name) != null;
+	}
+	
 	public static UUID getUUID(ChestShopLogger plugin, String name) {
 		UUID uuid = null;
 		try {
@@ -124,6 +128,10 @@ public class PlayerModel {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean exists() {
+		return uuid != null;
 	}
 	
 	public UUID getUUID() {

@@ -130,14 +130,16 @@ private ChestShopLogger plugin;
 			case "sell":
 				msg = msg + ChatColor.GRAY + "Sell " + ChatColor.GREEN + shop.getMaxAmount() + "x ";
 				msg = msg + ChatColor.GRAY + "for " + ChatColor.GREEN + shop.getSellPrice() + " ";
-				msg = msg + ChatColor.GRAY + "to " + ChatColor.GREEN + ownerModel.getName() + " ";
+				if(ownerModel.exists())
+					msg = msg + ChatColor.GRAY + "to " + ChatColor.GREEN + ownerModel.getName() + " ";
 				msg = msg + ChatColor.GRAY + "at " + getIDString(shop.getID());
 				break;
 				
 			case "buy":
 				msg = msg + ChatColor.GRAY + "Buy " + ChatColor.GREEN + shop.getMaxAmount() + "x ";
 				msg = msg + ChatColor.GRAY + "for " + ChatColor.GREEN + shop.getBuyPrice() + " ";
-				msg = msg + ChatColor.GRAY + "from " + ChatColor.GREEN + ownerModel.getName() + " ";
+				if(ownerModel.exists())
+					msg = msg + ChatColor.GRAY + "from " + ChatColor.GREEN + ownerModel.getName() + " ";
 				msg = msg + ChatColor.GRAY + "at " + getIDString(shop.getID());
 				break;
 				

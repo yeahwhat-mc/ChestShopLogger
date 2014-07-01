@@ -17,7 +17,8 @@ public class TransactionModel {
 	public static void create(ChestShopLogger plugin, TransactionEvent event) {
 		Location loc = event.getSign().getLocation();
 		ShopModel shop = new ShopModel(plugin, loc);
-		if(shop.getID() == 0) {
+		
+		if(shop.exists()) {
 			ShopModel.create(plugin, event.getSign(), event.getClient());
 			shop = new ShopModel(plugin, loc);
 		}
