@@ -33,7 +33,7 @@ public class PlayerModel {
 	public static void create(ChestShopLogger plugin, Player player) {
 		try {
 			
-			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("INSERT INTO clregionmarket_player (uuid, name) VALUES (?, ?)");
+			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("INSERT INTO chestshop_player (uuid, name) VALUES (?, ?)");
 			st.setString(1, player.getUniqueId().toString());
 			st.setString(2, player.getName());
 			st.execute();
@@ -48,7 +48,7 @@ public class PlayerModel {
 	public static void delete(ChestShopLogger plugin, Player player) {
 		try {
 			
-			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("DELETE FROM clregionmarket_player WHERE uuid = ?");
+			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("DELETE FROM chestshop_player WHERE uuid = ?");
 			st.setString(1, player.getUniqueId().toString());
 			st.execute();
 			st.close();
@@ -62,7 +62,7 @@ public class PlayerModel {
 	public static UUID getUUID(ChestShopLogger plugin, String name) {
 		UUID uuid = null;
 		try {
-			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("SELECT uuid FROM clregionmarket_player WHERE name = ?");
+			PreparedStatement st = plugin.getDBHandler().getConnection().prepareStatement("SELECT uuid FROM chestshop_player WHERE name = ?");
 			st.setString(1, name);
 			ResultSet rs = st.executeQuery();
 			if(rs.next()) {
@@ -79,7 +79,7 @@ public class PlayerModel {
 	
 	public void fetchData(UUID uuid) {
 		try {
-			PreparedStatement st = db.getConnection().prepareStatement("SELECT * FROM clregionmarket_player WHERE uuid = ?");
+			PreparedStatement st = db.getConnection().prepareStatement("SELECT * FROM chestshop_player WHERE uuid = ?");
 			st.setString(1, uuid.toString());
 			ResultSet rs = st.executeQuery();
 			if(rs.next()) {
@@ -104,7 +104,7 @@ public class PlayerModel {
 	
 	public void pushData() {
 		try {
-			PreparedStatement st = db.getConnection().prepareStatement("UPDATE clregionmarket_player SET "
+			PreparedStatement st = db.getConnection().prepareStatement("UPDATE chestshop_player SET "
 					+ "name = ? WHERE uuid = ?");
 			st.setString(1, name);
 			st.setString(2, uuid.toString());
