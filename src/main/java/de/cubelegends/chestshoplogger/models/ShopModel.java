@@ -52,10 +52,14 @@ public class ShopModel {
 	}
 	
 	public static void create(ChestShopLogger plugin, ShopCreatedEvent event) {
-		create(plugin, event.getSign(), event.getPlayer());
+		create(plugin, event.getSign(), event.getSignLines(), event.getPlayer());
+	}
+	
+	public static void create(ChestShopLogger plugin, Sign sign, Player player) {
+		create(plugin, sign, sign.getLines(), player);
 	}
         
-        public static void create(ChestShopLogger plugin, Sign sign, Player player) {
+	public static void create(ChestShopLogger plugin, Sign sign, String[] signLines, Player player) {
 		String world = sign.getWorld().getName();	
 		int x = sign.getX();
 		int y = sign.getY();
@@ -65,12 +69,12 @@ public class ShopModel {
 		double tpZ = player.getLocation().getZ();
 		float tpYaw = player.getLocation().getYaw();
 		float tpPitch = player.getLocation().getPitch();
-		String ownerName = sign.getLine(0);
+		String ownerName = signLines[0];
 		UUID ownerUUID = PlayerModel.getUUID(plugin, ownerName);
-		int maxAmount = Integer.parseInt(sign.getLine(1));
-		double buyPrice = PriceUtil.getBuyPrice(sign.getLine(2));
-		double sellPrice = PriceUtil.getSellPrice(sign.getLine(2));
-		String itemName = ShopManager.getItemName(sign.getLine(3));
+		int maxAmount = Integer.parseInt(signLines[1]);
+		double buyPrice = PriceUtil.getBuyPrice(signLines[2]);
+		double sellPrice = PriceUtil.getSellPrice(signLines[2]);
+		String itemName = ShopManager.getItemName(signLines[3]);
 		long created = System.currentTimeMillis();
 		
 		try {
