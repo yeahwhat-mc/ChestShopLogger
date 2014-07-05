@@ -85,35 +85,61 @@ private ChestShopLogger plugin;
 		
 	}
 	
-	public void find(CommandSender sender, String action, String dirtyName) {
+	public void find(CommandSender sender, String option, String value) {
 		
 		if(!sender.hasPermission("chestshoplogger.find")) {
 			sender.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");
 			return;
 		}
-		
-		String itemName = getItemName(dirtyName);
-		
-		if(itemName.equals("Unknown")) {
-			sender.sendMessage(ChestShopLogger.PREFIX + "There is no item, called " + dirtyName + "!");
-			return;
-		}
-		
+
+		String itemName;
 		List<ShopModel> shops = null;
 		
-		switch(action) {
+		switch(option) {
+		
 		case "sell":
-			shops = ShopModel.findShops(plugin, ShopModel.SELLACTION, itemName);
+			
+			itemName = getItemName(value);
+			
+			if(itemName.equals("Unknown")) {
+				sender.sendMessage(ChestShopLogger.PREFIX + "There is no item, called " + value + "!");
+				return;
+			}
+			
+			shops = ShopModel.getShopsWitchOfferSell(plugin, itemName);
 			sender.sendMessage(ChatColor.DARK_GREEN + "========== Sell " + itemName + " ==========");
 			break;
+			
 		case "buy":
-			shops = ShopModel.findShops(plugin, ShopModel.BUYACTION, itemName);
+			
+			itemName = getItemName(value);
+			
+			if(itemName.equals("Unknown")) {
+				sender.sendMessage(ChestShopLogger.PREFIX + "There is no item, called " + value + "!");
+				return;
+			}
+			
+			shops = ShopModel.getShopsWitchOfferBuy(plugin, itemName);
 			sender.sendMessage(ChatColor.DARK_GREEN + "========== Buy " + itemName + " ==========");
 			break;
+			
+		case "player":
+			
+			if(!PlayerModel.exists(plugin, value)) {
+				sender.sendMessage(ChestShopLogger.PREFIX + "The player " + value + " isn't known by the plugin!");
+				return;
+			}
+			
+			PlayerModel player = new PlayerModel(plugin, PlayerModel.getUUID(plugin, value));
+			
+			shops = ShopModel.getShopsByPlayer(plugin, player.getUUID());
+			sender.sendMessage(ChatColor.DARK_GREEN + "========== Shops from " + player.getName() + " ==========");
+			break;
+			
 		}
 		
 		if(shops == null) {
-			sender.sendMessage(ChestShopLogger.PREFIX + "\"" + action + "\" is not a valid search option!");
+			sender.sendMessage(ChestShopLogger.PREFIX + "\"" + option + "\" is not a valid search option!");
 			return;
 		}
 		
@@ -123,27 +149,33 @@ private ChestShopLogger plugin;
 		
 		for(ShopModel shop : shops) {
 			
-			PlayerModel ownerModel = new PlayerModel(plugin, shop.getOwnerUUID());
+			PlayerModel playerModel = new PlayerModel(plugin, shop.getOwnerUUID());
 			String msg = "";
-			switch(action) {
+			switch(option) {
 			
 			case "sell":
 				msg = msg + ChatColor.GRAY + "Sell " + ChatColor.GREEN + shop.getMaxAmount() + "x ";
 				msg = msg + ChatColor.GRAY + "for " + ChatColor.GREEN + shop.getSellPrice() + " ";
-				if(ownerModel.exists())
-					msg = msg + ChatColor.GRAY + "to " + ChatColor.GREEN + ownerModel.getName() + " ";
+				if(playerModel.exists())
+					msg = msg + ChatColor.GRAY + "to " + ChatColor.GREEN + playerModel.getName() + " ";
 				msg = msg + ChatColor.GRAY + "at " + getIDString(shop.getID());
 				break;
 				
 			case "buy":
 				msg = msg + ChatColor.GRAY + "Buy " + ChatColor.GREEN + shop.getMaxAmount() + "x ";
 				msg = msg + ChatColor.GRAY + "for " + ChatColor.GREEN + shop.getBuyPrice() + " ";
-				if(ownerModel.exists())
-					msg = msg + ChatColor.GRAY + "from " + ChatColor.GREEN + ownerModel.getName() + " ";
+				if(playerModel.exists())
+					msg = msg + ChatColor.GRAY + "from " + ChatColor.GREEN + playerModel.getName() + " ";
 				msg = msg + ChatColor.GRAY + "at " + getIDString(shop.getID());
 				break;
 				
+			case "player":
+				msg = msg + ChatColor.GRAY + "The player owns a " + ChatColor.GREEN + shop.getItemName() + " shop ";
+				msg = msg + ChatColor.GRAY + "with the id " + getIDString(shop.getID());
+				break;
+				
 			}
+			
 			sender.sendMessage(msg);
 			
 		}

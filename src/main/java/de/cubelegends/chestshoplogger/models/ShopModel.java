@@ -127,22 +127,33 @@ public class ShopModel {
 		}
 	}
 	
-	public static List<ShopModel> findShops(ChestShopLogger plugin, int action, String itemName) {
+	public static List<ShopModel> getShopsWitchOfferBuy(ChestShopLogger plugin, String itemName) {
+		Object[] args = {itemName};
+		return getShops(plugin, "WHERE itemname = ? AND buyprice != -1 ORDER BY buyprice / maxamount ASC", args);
+	}
+	
+	public static List<ShopModel> getShopsWitchOfferSell(ChestShopLogger plugin, String itemName) {
+		Object[] args = {itemName};
+		return getShops(plugin, "WHERE itemname = ? AND sellprice != -1 ORDER BY sellprice / maxamount DESC", args);
+	}
+	
+	public static List<ShopModel> getShopsByPlayer(ChestShopLogger plugin, UUID ownerUUID) {
+		Object[] args = {ownerUUID.toString()};
+		return getShops(plugin, "WHERE owneruuid = ?", args);
+	}
+	
+	private static List<ShopModel> getShops(ChestShopLogger plugin, String options, Object[] args) {
 		List<ShopModel> shops = new ArrayList<ShopModel>();
 		
 		try {
 			
 			Connection con = plugin.getDBHandler().open();
-			PreparedStatement st = null;
-			switch(action) {
-			case BUYACTION:
-				st = con.prepareStatement("SELECT * FROM chestshop_shop WHERE itemname = ? AND buyprice != -1 ORDER BY buyprice / maxamount ASC");
-				break;
-			case SELLACTION:
-				st = con.prepareStatement("SELECT * FROM chestshop_shop WHERE itemname = ? AND sellprice != -1 ORDER BY sellprice / maxamount DESC");
-				break;
+			PreparedStatement st = con.prepareStatement("SELECT * FROM chestshop_shop " + options);
+			
+			for(int i = 0; i < args.length; i++) {
+				st.setObject(i + 1, args[i]);
 			}
-			st.setString(1, itemName);
+			
 			ResultSet rs = st.executeQuery();
 			
 			while(rs.next()) {
