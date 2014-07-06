@@ -18,7 +18,7 @@ public class TransactionModel {
 		Location loc = event.getSign().getLocation();
 		ShopModel shop = new ShopModel(plugin, loc);
 		
-		if(shop.exists()) {
+		if(!shop.exists()) {
 			ShopModel.create(plugin, event.getSign(), event.getClient());
 			shop = new ShopModel(plugin, loc);
 		}
@@ -37,24 +37,22 @@ public class TransactionModel {
 			amount = amount + itemStack.getAmount();
 		}
 		
-		if(shop.getID() != 0) {
-			try {
+		try {
 				
-				Connection con = plugin.getDBHandler().open();
-				PreparedStatement st = con.prepareStatement("INSERT INTO chestshop_transaction (shopid, clientuuid, type, amount, price, date) VALUES(?, ?, ?, ?, ?, ?)");
-				st.setInt(1, shop.getID());
-				st.setString(2, event.getClient().getUniqueId().toString());
-				st.setString(3, type);
-				st.setInt(4, amount);
-				st.setDouble(5, price);
-				st.setLong(6, date);
-				st.execute();
-				st.close();
-				con.close();
+			Connection con = plugin.getDBHandler().open();
+			PreparedStatement st = con.prepareStatement("INSERT INTO chestshop_transaction (shopid, clientuuid, type, amount, price, date) VALUES(?, ?, ?, ?, ?, ?)");
+			st.setInt(1, shop.getID());
+			st.setString(2, event.getClient().getUniqueId().toString());
+			st.setString(3, type);
+			st.setInt(4, amount);
+			st.setDouble(5, price);
+			st.setLong(6, date);
+			st.execute();
+			st.close();
+			con.close();
 				
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
 		}
 	}
 
