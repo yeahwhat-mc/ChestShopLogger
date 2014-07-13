@@ -1,5 +1,6 @@
 package de.cubelegends.chestshoplogger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -39,8 +40,27 @@ public class CmdHandler implements CommandExecutor {
 			sm.find(sender, args[1], args[2]);
 			return true;			
 		}
-		
-		return false;
+
+        help(sender);
+		return true;
 	}
+
+    private void help(CommandSender sender) {
+
+        if(sender.hasPermission("chestshoplogger.find")) {
+            sender.sendMessage(ChatColor.GREEN + "/shop find buy <item> " + ChatColor.GRAY + "- Search for buyable items");
+            sender.sendMessage(ChatColor.GREEN + "/shop find sell <item> " + ChatColor.GRAY + "- Search for sellable items");
+            sender.sendMessage(ChatColor.GREEN + "/shop find player <player> " + ChatColor.GRAY + "- Search for player shops");
+        }
+
+        if(sender.hasPermission("chestshoplogger.tp")) {
+            sender.sendMessage(ChatColor.GREEN + "/shop tp <id> " + ChatColor.GRAY + "- Teleport to a shop");
+        }
+
+        if(sender.hasPermission("chestshoplogger.coords")) {
+            sender.sendMessage(ChatColor.GREEN + "/shop coords <id> " + ChatColor.GRAY + "- Display coordinates of a shop");
+        }
+
+    }
 
 }
