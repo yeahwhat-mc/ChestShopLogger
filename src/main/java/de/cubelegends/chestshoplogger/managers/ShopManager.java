@@ -25,7 +25,7 @@ private ChestShopLogger plugin;
 	
 	public void tp(Player player, String idStr) {
 		
-		int id = 0;
+		int id;
 		
 		if(!player.hasPermission("chestshoplogger.tp")) {
 			player.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");
@@ -59,7 +59,7 @@ private ChestShopLogger plugin;
 	
 	public void coords(CommandSender sender, String idStr) {
 		
-		int id = 0;
+		int id;
 		
 		if(!sender.hasPermission("chestshoplogger.coords")) {
 			sender.sendMessage(ChestShopLogger.PREFIX + "You don't have enough permissions to do this!");

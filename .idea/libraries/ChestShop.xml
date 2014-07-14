@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ChestShop">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../Resources/ChestShop.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
