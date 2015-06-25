@@ -47,8 +47,19 @@ database:
 
 1. Clone this repository:
   `git clone https://github.com/yeahwhat-mc/ChestShopLogger`
-2. Run maven to compile the Java executable:  
-  `mvn install`
+2. Download the latest ChestShop `.jar` via Bukkit and save it as `ChestShop.jar` in this project folder:
+  http://dev.bukkit.org/bukkit-plugins/chestshop/files/
+3. Run the `install_dependency_to_repo.sh` script:  
+```shell
+$ ./install_dependency_to_repo.sh
+[Dependency installer]
+What is your dependency\'s file name? ChestShop.jar
+What is your dependency\'s group ID? com.acrobot.chestshop
+What is your dependency\'s artifact ID? chestshop
+What is your dependency\'s version? 3.8.9
+```
+4. Run maven to compile the Java executable:  
+  `mvn clean install`
 
 ## Contributing
 
